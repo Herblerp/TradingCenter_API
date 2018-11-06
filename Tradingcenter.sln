@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradingcenter.API", "Tradingcenter.API\Tradingcenter.API.csproj", "{AD106E09-B858-4BDD-BB97-A6B0110F1D42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradingcenter.DAL", "Tradingcenter.DAL\Tradingcenter.DAL.csproj", "{60F30EEF-D027-481E-AEDF-F36DF562930F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trainingcenter.DL", "Trainingcenter.DL\Trainingcenter.DL.csproj", "{D6C06340-0E30-4A00-AA22-AD570B4A97BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{AD106E09-B858-4BDD-BB97-A6B0110F1D42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD106E09-B858-4BDD-BB97-A6B0110F1D42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD106E09-B858-4BDD-BB97-A6B0110F1D42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60F30EEF-D027-481E-AEDF-F36DF562930F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60F30EEF-D027-481E-AEDF-F36DF562930F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60F30EEF-D027-481E-AEDF-F36DF562930F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60F30EEF-D027-481E-AEDF-F36DF562930F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6C06340-0E30-4A00-AA22-AD570B4A97BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6C06340-0E30-4A00-AA22-AD570B4A97BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6C06340-0E30-4A00-AA22-AD570B4A97BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6C06340-0E30-4A00-AA22-AD570B4A97BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
