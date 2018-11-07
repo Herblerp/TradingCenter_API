@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradingcenter.API", "Tradingcenter.API\Tradingcenter.API.csproj", "{AD106E09-B858-4BDD-BB97-A6B0110F1D42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradingcenter.API", "Tradingcenter.API\Tradingcenter.API.csproj", "{AD106E09-B858-4BDD-BB97-A6B0110F1D42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tradingcenter.DAL", "Tradingcenter.DAL\Tradingcenter.DAL.csproj", "{60F30EEF-D027-481E-AEDF-F36DF562930F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradingcenter.Data", "Tradingcenter.DAL\Tradingcenter.Data.csproj", "{60F30EEF-D027-481E-AEDF-F36DF562930F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trainingcenter.DL", "Trainingcenter.DL\Trainingcenter.DL.csproj", "{D6C06340-0E30-4A00-AA22-AD570B4A97BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trainingcenter.Domain", "Trainingcenter.DL\Trainingcenter.Domain.csproj", "{D6C06340-0E30-4A00-AA22-AD570B4A97BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
