@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Trainingcenter.Domain.Entities;
+using Trainingcenter.Domain.DomainModels;
 
 namespace Tradingcenter.Data
 {

@@ -1,4 +1,4 @@
-﻿namespace Trainingcenter.Domain.Entities
+﻿namespace Trainingcenter.Domain.DomainModels
 {
     public class Note
     {

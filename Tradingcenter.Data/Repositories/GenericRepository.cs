@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Trainingcenter.Domain.Repositories;
+using Trainingcenter.Domain.Interfaces;
 
 namespace Tradingcenter.Data.Repositories
 {
@@ -24,6 +24,12 @@ namespace Tradingcenter.Data.Repositories
         public async Task DeleteAsync<T>(T entity) where T : class
         {
             _context.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync<T>(T entity) where T : class
+        {
+            _context.Update(entity);
             await _context.SaveChangesAsync();
         }
     }
