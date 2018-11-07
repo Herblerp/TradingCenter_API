@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
 
-namespace Trainingcenter.Domain.Interfaces
+namespace Trainingcenter.Domain.Repositories
 {
     interface INoteRepository
     {

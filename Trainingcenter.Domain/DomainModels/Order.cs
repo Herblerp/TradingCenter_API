@@ -13,7 +13,7 @@ namespace Trainingcenter.Domain.DomainModels
         public string Exchange { get; set; }
         public string ExchangeOrderId { get; set; }
         public string Symbol { get; set; }
-        public bool Side { get; set; }
+        public string Side { get; set; }
         public double OrderQty { get; set; }
         public string Currency { get; set; }
         public double Price { get; set; }

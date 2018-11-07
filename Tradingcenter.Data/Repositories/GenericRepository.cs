@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Trainingcenter.Domain.Interfaces;
+using Trainingcenter.Domain.Repositories;
 
 namespace Tradingcenter.Data.Repositories
 {
