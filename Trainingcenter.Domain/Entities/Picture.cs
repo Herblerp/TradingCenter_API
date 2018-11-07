@@ -1,4 +1,4 @@
-﻿namespace Trainingcenter.DL.Entities
+﻿namespace Trainingcenter.Domain.Entities
 {
     public class Picture
     {

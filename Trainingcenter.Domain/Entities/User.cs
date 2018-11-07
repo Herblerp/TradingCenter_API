@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Trainingcenter.DL.Entities
+namespace Trainingcenter.Domain.Entities
 {
     public class User
     {
@@ -20,6 +20,7 @@ namespace Trainingcenter.DL.Entities
 
         public Picture Picture { get; set; }
         public ICollection<Order> Orders { get; set; }
+        public ICollection<Portfolio> Portfolios { get; set; }
         public ICollection<ExchangeKey> ExchangeKeys { get; set; }
     }
 }

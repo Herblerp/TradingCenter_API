@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Trainingcenter.DL.Entities
+namespace Trainingcenter.Domain.Entities
 {
     public class Order
     {
