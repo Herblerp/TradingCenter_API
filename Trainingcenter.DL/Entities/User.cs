@@ -19,7 +19,7 @@ namespace Trainingcenter.DL.Entities
         public DateTime LastActive { get; set; }
 
         public Picture Picture { get; set; }
-        public List<Order> Orders { get; set; }
-        public List<ExchangeKey> ExchangeKeys { get; set; }
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<ExchangeKey> ExchangeKeys { get; set; }
     }
 }
