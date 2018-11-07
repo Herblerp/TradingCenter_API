@@ -8,14 +8,23 @@ namespace Tradingcenter.Data.Repositories
 {
     class GenericRepository : IGenericRepository
     {
-        public Task AddAsync<T>(T entity) where T : class
+        private readonly DataContext _context;
+
+        public GenericRepository(DataContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task DeleteAsync<T>(T entity) where T : class
+        public async Task AddAsync<T>(T entity) where T : class
         {
-            throw new NotImplementedException();
+            _context.Add(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync<T>(T entity) where T : class
+        {
+            _context.Remove(entity);
+            await _context.SaveChangesAsync();
         }
     }
 }
