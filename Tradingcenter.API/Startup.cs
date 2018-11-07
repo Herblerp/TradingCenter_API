@@ -27,6 +27,7 @@ namespace Tradingcenter.API
         {
             services.ConfigureConnections();
             services.ConfigureMvc();
+            services.AddCors();
             services.ConfigureRepositories();
             services.ConfigureAuthentication(Configuration);
             
@@ -40,6 +41,7 @@ namespace Tradingcenter.API
                 app.UseDeveloperExceptionPage();
             }
             app.ConfigureExceptionHandler();
+            app.ConfigureCors();
             app.UseMvc();
         }
     }
