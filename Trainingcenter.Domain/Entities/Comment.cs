@@ -6,5 +6,12 @@ namespace Trainingcenter.Domain.Entities
 {
     public class Comment
     {
+        public int CommentId { get; set; }
+        public int OrderId { get; set; }
+
+        public string Message { get; set; }
+        
+        public Order Order { get; set; }
+
     }
 }

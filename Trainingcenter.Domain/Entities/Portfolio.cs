@@ -14,7 +14,8 @@ namespace Trainingcenter.Domain.Entities
         public string Goal { get; set; }
 
         public ICollection<Note> Notes { get; set; }
+        public ICollection<Order> Orders { get; set; }
 
-        public User User { get; set }
+        public User User { get; set; }
     }
 }

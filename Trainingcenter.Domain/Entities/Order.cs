@@ -8,8 +8,10 @@ namespace Trainingcenter.Domain.Entities
     {
         public string OrderId { get; set; }
         public int UserId { get; set; }
+        public int PortfolioId { get; set; }
 
         public string Exchange { get; set; }
+        public string ExchangeOrderId { get; set; }
         public string Symbol { get; set; }
         public bool Side { get; set; }
         public double OrderQty { get; set; }
@@ -18,5 +20,8 @@ namespace Trainingcenter.Domain.Entities
         public DateTime Timestamp { get; set; }
         
         public User User { get; set; }
+        public Portfolio Portfolio { get; set; }
+
+        public ICollection<Comment> Comments { get; set; }
     }
 }
