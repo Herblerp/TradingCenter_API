@@ -10,7 +10,6 @@ namespace Trainingcenter.Domain.Interfaces
     {
         Task<Portfolio> GetFromIdAsync(int portfolioId);
 
-        Task<List<Portfolio>> GetAllAsync();
         Task<List<Portfolio>> GetAllFromUserIdAsync(int userId);
     }
 }

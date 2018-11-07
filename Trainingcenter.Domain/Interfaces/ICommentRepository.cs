@@ -6,9 +6,10 @@ using Trainingcenter.Domain.DomainModels;
 
 namespace Trainingcenter.Domain.Interfaces
 {
-    interface IUserRepository
+    interface ICommentRepository
     {
-        Task<User> GetFromIdAsync(int userId);
-        Task<User> GetFromUsernameAsync(string username);
+        Task<Comment> GetFromIdAsync(int commentId);
+
+        Task<List<Comment>> GetAllFromOrderIdAsync(int orderId);
     }
 }

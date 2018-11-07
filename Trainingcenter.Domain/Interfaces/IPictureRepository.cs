@@ -6,9 +6,9 @@ using Trainingcenter.Domain.DomainModels;
 
 namespace Trainingcenter.Domain.Interfaces
 {
-    interface IUserRepository
+    interface IPictureRepository
     {
-        Task<User> GetFromIdAsync(int userId);
-        Task<User> GetFromUsernameAsync(string username);
+        Task<Picture> GetFromIdAsync(int pictureId);
+        Task<Picture> GetFromUserIdAsync(int userId);
     }
 }

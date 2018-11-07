@@ -6,9 +6,10 @@ using Trainingcenter.Domain.DomainModels;
 
 namespace Trainingcenter.Domain.Interfaces
 {
-    interface IUserRepository
+    interface IExchangeKeyRepository
     {
-        Task<User> GetFromIdAsync(int userId);
-        Task<User> GetFromUsernameAsync(string username);
+        Task<ExchangeKey> GetFromIdAsync(int exchangeKeyId);
+
+        Task<List<ExchangeKey>> GetAllFromUserIdAsync(int userId);
     }
 }
