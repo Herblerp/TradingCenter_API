@@ -10,8 +10,6 @@ namespace Trainingcenter.Domain.Services
     {
         Task<UserDTO> Register(UserToRegisterDTO userToRegister);
         Task<UserDTO> Login(UserToLoginDTO userToLogin);
-        Task<bool> UserExixts(string username);
-        bool IsValidEmail(string email);
-        void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
+        Task<bool> UserExists(string username);
     }
 }

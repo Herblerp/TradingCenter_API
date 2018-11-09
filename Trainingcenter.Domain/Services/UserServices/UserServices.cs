@@ -27,7 +27,37 @@ namespace Trainingcenter.Domain.Services.UserServices
 
         public async Task<UserDTO> Login(UserToLoginDTO userToLogin)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                //Get the user
+                userToLogin.Username = userToLogin.Username.ToLower();
+                var userFromDB = await _userRepo.GetFromUsernameAsync(userToLogin.Username);
+
+                //Check input
+                if (userFromDB == null)
+                {
+                    return null;
+                }
+                if (!VerifyPasswordHash(userToLogin.Password, userFromDB.PasswordHash, userFromDB.PasswordSalt))
+                {
+                    return null;
+                }
+
+                //Convert user
+                var userToReturn = new UserDTO
+                {
+                    UserId = userFromDB.UserId,
+                    Username = userFromDB.Username
+                    //More fields here
+                };
+
+                return userToReturn;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("UserService failed to login server");
+            }
         }
 
         public async Task<UserDTO> Register(UserToRegisterDTO userToRegister)
@@ -39,7 +69,7 @@ namespace Trainingcenter.Domain.Services.UserServices
                 userToRegister.Username = userToRegister.Username.ToLower();
 
                 //Check input
-                if (await UserExixts(userToRegister.Username))
+                if (await UserExists(userToRegister.Username))
                 {
                     return null;
                 }
@@ -65,13 +95,14 @@ namespace Trainingcenter.Domain.Services.UserServices
                 //Save the user
                 await _genericRepo.AddAsync(userToRegister);
 
-                //Prepare to return user 
+                //Convert user
                 var createdUser = await _userRepo.GetFromUsernameAsync(userToRegister.Username);
 
                 var userToReturn = new UserDTO
                 {
                     UserId = createdUser.UserId,
                     Username = createdUser.Username
+                    //More fields here
                 };
 
                 return userToReturn;
@@ -85,7 +116,7 @@ namespace Trainingcenter.Domain.Services.UserServices
 
         #region Helpers
 
-        public async Task<bool> UserExixts(string username)
+        public async Task<bool> UserExists(string username)
         {
             if (await _userRepo.GetFromUsernameAsync(username) == null)
             {
@@ -94,7 +125,7 @@ namespace Trainingcenter.Domain.Services.UserServices
             return true;
         }
 
-        public bool IsValidEmail(string email)
+        private bool IsValidEmail(string email)
         {
             try
             {
@@ -107,12 +138,28 @@ namespace Trainingcenter.Domain.Services.UserServices
             }
         }
 
-        public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != passwordHash[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
         }
 
