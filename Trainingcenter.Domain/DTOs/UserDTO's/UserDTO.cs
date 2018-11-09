@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Trainingcenter.Domain.DTOs.User
+namespace Trainingcenter.Domain.DTOs.UserDTOs
 {
-    class UserToLoginDTO
+    class UserDTO
     {
+        public int UserId { get; set; }
         public string Username { get; set; }
-        public string Password { get; set; }
     }
 }

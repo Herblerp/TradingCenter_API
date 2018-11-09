@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Trainingcenter.Domain.DTOs.User
+namespace Trainingcenter.Domain.DTOs.UserDTOs
 {
     class UserToRegisterDTO
     {
