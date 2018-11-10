@@ -180,11 +180,11 @@ namespace BitMEX_API
         }
 
         //Returns all orders made after given DateTime, format is "2018-10-22 12:45:37.123"
-        public string GetOrders(DateTime dt)
+        public string GetOrders(string dt)
         {
             var param = new Dictionary<string, string>();
             param["reverse"] = true.ToString();
-            param["startTime"] = dt.ToString();
+            param["startTime"] = dt;
             return Query("GET", "/order", param, true);
         }
         public string PostOrders()

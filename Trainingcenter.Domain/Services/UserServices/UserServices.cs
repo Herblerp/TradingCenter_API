@@ -34,7 +34,7 @@ namespace Trainingcenter.Domain.Services.UserServices
                 userToLogin.Username = userToLogin.Username.ToLower();
                 var userFromDB = await _userRepo.GetFromUsernameAsync(userToLogin.Username);
 
-                //Check input
+                //Validate credentials
                 if (userFromDB == null)
                 {
                     return null;
@@ -43,16 +43,7 @@ namespace Trainingcenter.Domain.Services.UserServices
                 {
                     return null;
                 }
-
-                //Convert user
-                var userToReturn = new UserDTO
-                {
-                    UserId = userFromDB.UserId,
-                    Username = userFromDB.Username
-                    //More fields here
-                };
-
-                return userToReturn;
+                return ConvertUser(userFromDB);
             }
             catch(Exception ex)
             {
@@ -161,6 +152,21 @@ namespace Trainingcenter.Domain.Services.UserServices
                 }
                 return true;
             }
+        }
+
+        #endregion
+
+        #region Converters
+
+        private UserDTO ConvertUser(User user)
+        {
+            var userDTO = new UserDTO
+            {
+                UserId = user.UserId,
+                Username = user.Username
+                //More fields here
+            };
+            return userDTO;
         }
 
         #endregion

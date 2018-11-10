@@ -24,6 +24,15 @@ namespace Trainingcenter.Domain.Services.OrderServices
         #endregion
 
         #region ExchangeMethods
+        public Task<List<Order>> GetAllOrders(int userId)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<List<Order>> RefreshAllOrders(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<Order>> GetBinanceOrdersFromUserId(int userId)
         {
             throw new NotImplementedException();
@@ -46,9 +55,29 @@ namespace Trainingcenter.Domain.Services.OrderServices
             }
             return orderList;
         }
+
+        public async Task<List<Order>> GetBitMEXOrdersFromUserId(int userId, DateTime dateFrom)
+        {
+            var exchangeKey = await _keyRepo.GetFromNameAsync("BitMEX", userId);
+
+            BitMEXApi bitmex = new BitMEXApi(exchangeKey.Key, exchangeKey.Secret);
+
+            string date = dateFrom.ToString("yyyy-MM-dd hh:mm:ss.fff");
+
+            string temp = bitmex.GetOrders(date);
+            var BitMEXOrderList = JsonConvert.DeserializeObject<List<BitMEXOrder>>(temp);
+            var orderList = new List<Order>();
+
+            foreach (var BitMEXOrder in BitMEXOrderList)
+            {
+                Order order = ConvertBitMEXOrder(BitMEXOrder, userId);
+                orderList.Add(order);
+            }
+            return orderList;
+        }
         #endregion
 
-        #region DBMethods
+        #region Services
         public async Task<List<Order>> GetOrdersFromUserId(int userId, DateTime dateFrom, DateTime dateTo)
         {
             var orderList = await _orderRepo.GetAllFromDateUserIdAsync(userId, dateFrom, dateTo);
