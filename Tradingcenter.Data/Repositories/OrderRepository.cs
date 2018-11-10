@@ -33,5 +33,30 @@ namespace Tradingcenter.Data.Repositories
 
             return orderList;
         }
+
+        public async Task<List<Order>> GetAllFromDatePortfolioIdAsync(int portfolioId, DateTime dateFrom, DateTime dateTo)
+        {
+            var orderList = await _context.Orders.Where(x =>
+                x.PortfolioId == portfolioId &&
+                x.Timestamp > dateFrom &&
+                x.Timestamp < dateTo).ToListAsync();
+
+            orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
+
+            return orderList;
+        }
+
+        public async Task<List<Order>> GetAllFromDateUserIdAsync(int userId, DateTime dateFrom, DateTime dateTo)
+        {
+            var orderList = await _context.Orders.Where(x =>
+                x.PortfolioId == userId &&
+                x.Timestamp > dateFrom &&
+                x.Timestamp < dateTo).ToListAsync();
+
+            orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
+
+            return orderList;
+        }
+
     }
 }

@@ -18,16 +18,6 @@ namespace Trainingcenter.Domain.Services.OrderServices
         }
         #endregion
 
-        public Task<List<Order>> GetOrdersFromUserId(int userId, DateTime dateFrom, DateTime dateTo)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Order>> ResfreshOrdersFromUserId(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<List<Order>> GetBinanceOrdersFromUserId(int userId)
         {
             throw new NotImplementedException();

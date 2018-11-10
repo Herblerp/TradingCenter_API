@@ -9,6 +9,7 @@ namespace Trainingcenter.Domain.DomainModels
         public int ExchangeKeyId { get; set; }
         public int UserId { get; set; }
 
+        public string Name { get; set; }
         public string Key { get; set; }
         public string Secret { get; set; }
 
