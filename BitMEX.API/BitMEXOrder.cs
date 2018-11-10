@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BitMEX_API
 {
-    class BitMEXOrder
+    public class BitMEXOrder
     {
         public string orderID { get; set; }
         public string clOrdID { get; set; }

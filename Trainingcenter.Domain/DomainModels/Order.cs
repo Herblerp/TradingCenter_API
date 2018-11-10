@@ -6,7 +6,7 @@ namespace Trainingcenter.Domain.DomainModels
 {
     public class Order
     {
-        public string OrderId { get; set; }
+        public int OrderId { get; set; }
         public int UserId { get; set; }
         public int PortfolioId { get; set; }
 
