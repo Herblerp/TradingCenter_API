@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.DTOs.UserDTOs;
 using Trainingcenter.Domain.Repositories;
+using Trainingcenter.Domain.Services.PortfolioServices;
 
 namespace Trainingcenter.Domain.Services.UserServices
 {
@@ -14,11 +15,13 @@ namespace Trainingcenter.Domain.Services.UserServices
 
         private readonly IGenericRepository _genericRepo;
         private readonly IUserRepository _userRepo;
+        private readonly IPortfolioServices _portfolioService;
 
-        public UserServices(IGenericRepository genericRepo, IUserRepository userRepo)
+        public UserServices(IGenericRepository genericRepo, IUserRepository userRepo, IPortfolioServices portfolioService)
         {
             _genericRepo = genericRepo;
             _userRepo = userRepo;
+            _portfolioService = portfolioService;
         }
 
         #endregion
@@ -74,11 +77,14 @@ namespace Trainingcenter.Domain.Services.UserServices
                 userToCreate.PasswordSalt = passwordSalt;
                 userToCreate.CreatedOn = DateTime.Now;
 
-                //Save the user
+                //Create the user
                 await _genericRepo.AddAsync(userToCreate);
 
                 //Convert user
                 var createdUser = await _userRepo.GetFromUsernameAsync(userToRegister.Username);
+
+                //Create default portfolio
+                await _portfolioService.CreateDefaultPortfolio(createdUser.UserId);
 
                 var userToReturn = new UserDTO
                 {

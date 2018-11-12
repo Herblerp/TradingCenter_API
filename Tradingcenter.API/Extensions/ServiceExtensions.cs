@@ -13,6 +13,7 @@ using Tradingcenter.Data;
 using Tradingcenter.Data.Repositories;
 using Trainingcenter.Domain.Repositories;
 using Trainingcenter.Domain.Services;
+using Trainingcenter.Domain.Services.PortfolioServices;
 using Trainingcenter.Domain.Services.UserServices;
 
 /*  This class contains the service configurations,
@@ -37,6 +38,8 @@ namespace Tradingcenter.API.Extensions
             services.AddScoped<IGenericRepository, GenericRepository>();
             services.AddScoped<IUserServices, UserServices>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPortfolioServices, PortfolioServices>();
+            services.AddScoped<IPortfolioRepository, PortfolioRepository>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)

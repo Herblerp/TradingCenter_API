@@ -37,6 +37,19 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             return Convert(portfolioToCreate);
         }
 
+        public async Task<PortfolioDTO> CreateDefaultPortfolio(int userId)
+        {
+            var portfolio = new Portfolio
+            {
+                UserId = userId,
+                Name = "default"
+            };
+
+            await _genericRepo.AddAsync(portfolio);
+
+            return Convert(portfolio);
+        }
+
         public async Task<PortfolioDTO> UpdatePortfolio(PortfolioToUpdateDTO portfolioToUpdate, int userId)
         {
             var portfolio = await _portfolioRepo.GetFromNameAsync(portfolioToUpdate.Name, userId);
