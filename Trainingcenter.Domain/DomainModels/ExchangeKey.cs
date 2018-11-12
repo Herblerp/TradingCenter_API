@@ -12,6 +12,8 @@ namespace Trainingcenter.Domain.DomainModels
         public string Name { get; set; }
         public string Key { get; set; }
         public string Secret { get; set; }
+        public int LastId { get; set; }
+        public DateTime LastRefresh { get; set; }
 
         public User User { get; set; }
     }

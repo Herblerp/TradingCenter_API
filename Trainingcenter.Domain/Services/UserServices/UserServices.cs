@@ -24,7 +24,6 @@ namespace Trainingcenter.Domain.Services.UserServices
         #endregion
 
         #region ServiceMethods
-
         public async Task<UserDTO> Login(UserToLoginDTO userToLogin)
         {
             try
@@ -103,9 +102,6 @@ namespace Trainingcenter.Domain.Services.UserServices
                 throw new Exception("UserService failed to register user");
             }
         }
-        #endregion
-
-        #region Helpers
 
         public async Task<bool> UserExists(string username)
         {
@@ -115,6 +111,9 @@ namespace Trainingcenter.Domain.Services.UserServices
             }
             return true;
         }
+        #endregion
+
+        #region Helpers
 
         private bool IsValidEmail(string email)
         {

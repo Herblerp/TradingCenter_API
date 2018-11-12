@@ -8,6 +8,8 @@ namespace Trainingcenter.Domain.Repositories
 {
     public interface IOrderRepository
     {
+        Task<List<Order>> SaveOrders(List<Order> orders);
+
         Task<List<Order>> GetOrdersFromUserIdAsync(int userId);
         Task<List<Order>> GetOrdersFromPortfolioIdAsync(int portfolioId);
 

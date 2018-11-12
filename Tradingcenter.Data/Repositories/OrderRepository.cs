@@ -13,12 +13,30 @@ namespace Tradingcenter.Data.Repositories
     {
         #region DependecyInjection
         private readonly DataContext _context;
+        private readonly IGenericRepository _genericRepo;
 
-        public OrderRepository(DataContext context)
+        public OrderRepository(DataContext context, IGenericRepository genericRepo)
         {
             _context = context;
+            _genericRepo = genericRepo;
         }
         #endregion
+
+        public async Task<List<Order>> SaveOrders(List<Order> orders)
+        {
+            var savedOrders = new List<Order>();
+
+            foreach(var order in orders)
+            {
+                var orderFromDB = await _context.Orders.FirstOrDefaultAsync(x => x.OrderId == order.OrderId && x.Exchange == order.Exchange);
+                if(orderFromDB != null)
+                {
+                    await _genericRepo.AddAsync(order);
+                    savedOrders.Add(order);
+                }
+            }
+            return savedOrders;
+        }
 
         public async Task<List<Order>> GetOrdersFromUserIdAsync(int userId)
         {

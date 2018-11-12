@@ -20,5 +20,6 @@ namespace Trainingcenter.Domain.Services.OrderServices
         Task<List<Order>> GetBitMEXOrdersFromUserId(int userId);
         Task<List<Order>> GetBitMEXOrdersFromUserId(int userId, DateTime dateFrom);
         Task<List<Order>> GetBinanceOrdersFromUserId(int userId);
+        Task<List<Order>> GetBinanceOrdersFromUserId(int userId, int lastOrderId);
     }
 }

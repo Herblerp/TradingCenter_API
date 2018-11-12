@@ -13,52 +13,66 @@ namespace Trainingcenter.Domain.Services.OrderServices
     class OrderServices : IOrderServices
     {
         #region DependencyInjection
-        private readonly IGenericRepository _genericRepo;
+
         private readonly IOrderRepository _orderRepo;
         private readonly IExchangeKeyRepository _keyRepo;
 
         public OrderServices(IOrderRepository orderRepo, IExchangeKeyRepository keyRepo, IGenericRepository genericRepo)
         {
-            _genericRepo = genericRepo;
             _orderRepo = orderRepo;
             _keyRepo = keyRepo;
         }
+
         #endregion
 
         #region ExchangeMethods
+
+        //Get all orders from all exchanges from a given user
         public async Task<List<Order>> GetAllOrders(int userId)
         {
             var orderList = new List<Order>();
             orderList.Concat(await GetBitMEXOrdersFromUserId(userId));
             //orderList.Concat(await GetBinanceOrdersFromUserId(userId));
 
-            foreach (var order in orderList)
-            {
-                await _genericRepo.AddAsync(order);
-            }
+            var savedOrders = await _orderRepo.SaveOrders(orderList);
 
-            return orderList;
+            return savedOrders;
         }
 
+        //Checks all exchanges for new orders from a given user
         public async Task<List<Order>> RefreshAllOrders(int userId)
         {
+            //Get the current time
+            DateTime time = DateTime.Now;
+
+            //Get the keys for the exchanges
+            var BitMEXKey = await _keyRepo.GetFromNameAsync("BitMEX", userId);
+            var BinanceKey = await _keyRepo.GetFromNameAsync("Binance", userId);
+
+            //Fill the list with orders from the exchanges
             var orderList = new List<Order>();
-            //orderList.Concat(await GetBitMEXOrdersFromUserId(userId, dateFrom));
-            //orderList.Concat(await GetBinanceOrdersFromUserId(userId, dateFrom, dateTo));
+            orderList.Concat(await GetBitMEXOrdersFromUserId(userId, BitMEXKey.LastRefresh.Date));
+            orderList.Concat(await GetBinanceOrdersFromUserId(userId, BinanceKey.LastId));
 
-            foreach (var order in orderList)
-            {
-                await _genericRepo.AddAsync(order);
-            }
+            //Save the orders
+            var savedOrders = await _orderRepo.SaveOrders(orderList);
 
-            return orderList;
+            return savedOrders;
         }
 
+        //Get all orders from the Binance exchange from a given user
         public Task<List<Order>> GetBinanceOrdersFromUserId(int userId)
         {
             throw new NotImplementedException();
         }
 
+        //Get all orders from the Binance exchange from a given user
+        public Task<List<Order>> GetBinanceOrdersFromUserId(int userId, int lastOrderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        //Get all orders from the BitMEX exchange from a given user
         public async Task<List<Order>> GetBitMEXOrdersFromUserId(int userId)
         {
             var exchangeKey = await _keyRepo.GetFromNameAsync("BitMEX", userId);
@@ -77,6 +91,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
             return orderList;
         }
 
+        //Get all orders from the BitMEX exchange after a given date from a given user
         public async Task<List<Order>> GetBitMEXOrdersFromUserId(int userId, DateTime dateFrom)
         {
             var exchangeKey = await _keyRepo.GetFromNameAsync("BitMEX", userId);
@@ -96,6 +111,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
             }
             return orderList;
         }
+
         #endregion
 
         #region Services
