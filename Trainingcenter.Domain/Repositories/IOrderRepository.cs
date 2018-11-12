@@ -8,10 +8,10 @@ namespace Trainingcenter.Domain.Repositories
 {
     public interface IOrderRepository
     {
-        Task<List<Order>> GetAllFromUserIdAsync(int userId);
-        Task<List<Order>> GetAllFromPortfolioIdAsync(int portfolioId);
+        Task<List<Order>> GetOrdersFromUserIdAsync(int userId);
+        Task<List<Order>> GetOrdersFromPortfolioIdAsync(int portfolioId);
 
-        Task<List<Order>> GetAllFromDateUserIdAsync(int userId, DateTime dateFrom, DateTime dateTo);
-        Task<List<Order>> GetAllFromDatePortfolioIdAsync(int portfolioId, DateTime dateFrom, DateTime dateTo);
+        Task<List<Order>> GetOrdersFromUserIdAsync(int userId, DateTime dateFrom, DateTime dateTo);
+        Task<List<Order>> GetOrdersFromPortfolioIdAsync(int portfolioId, DateTime dateFrom, DateTime dateTo);
     }
 }
