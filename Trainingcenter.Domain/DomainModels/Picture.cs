@@ -10,7 +10,6 @@ namespace Trainingcenter.Domain.DomainModels
         [Required]
         public string URL { get; set; }
 
-        [Required]
         public User User { get; set; }
     }
 }

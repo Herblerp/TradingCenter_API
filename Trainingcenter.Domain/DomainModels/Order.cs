@@ -27,9 +27,7 @@ namespace Trainingcenter.Domain.DomainModels
         public double Price { get; set; }
         public DateTime Timestamp { get; set; }
 
-        [Required]
         public User User { get; set; }
-        [Required]
         public Portfolio Portfolio { get; set; }
 
         public ICollection<Comment> Comments { get; set; }
