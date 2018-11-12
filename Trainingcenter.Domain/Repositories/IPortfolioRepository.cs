@@ -6,9 +6,10 @@ using Trainingcenter.Domain.DomainModels;
 
 namespace Trainingcenter.Domain.Repositories
 {
-    interface IPortfolioRepository
+    public interface IPortfolioRepository
     {
         Task<Portfolio> GetFromIdAsync(int portfolioId);
+        Task<Portfolio> GetFromNameAsync(string name, int userId);
 
         Task<List<Portfolio>> GetAllFromUserIdAsync(int userId);
     }

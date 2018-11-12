@@ -24,6 +24,7 @@ namespace Trainingcenter.Domain.Services.UserServices
         #endregion
 
         #region Services
+
         public async Task<UserDTO> Login(UserToLoginDTO userToLogin)
         {
             try
@@ -39,6 +40,10 @@ namespace Trainingcenter.Domain.Services.UserServices
                 {
                     return null;
                 }
+
+                userFromDB.LastActive = DateTime.Now;
+                await _genericRepo.UpdateAsync(userFromDB);
+
                 return ConvertUser(userFromDB);
             }
             catch(Exception ex)
@@ -70,7 +75,7 @@ namespace Trainingcenter.Domain.Services.UserServices
                 userToCreate.CreatedOn = DateTime.Now;
 
                 //Save the user
-                await _genericRepo.AddAsync(userToRegister);
+                await _genericRepo.AddAsync(userToCreate);
 
                 //Convert user
                 var createdUser = await _userRepo.GetFromUsernameAsync(userToRegister.Username);
@@ -92,7 +97,7 @@ namespace Trainingcenter.Domain.Services.UserServices
 
         public async Task<bool> UserExists(string username)
         {
-            if (await _userRepo.GetFromUsernameAsync(username) == null)
+            if (await _userRepo.GetFromUsernameAsync(username.ToLower()) == null)
             {
                 return false;
             }
