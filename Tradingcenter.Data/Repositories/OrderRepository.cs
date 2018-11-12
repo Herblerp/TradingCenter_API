@@ -9,9 +9,10 @@ using Trainingcenter.Domain.Repositories;
 
 namespace Tradingcenter.Data.Repositories
 {
-    class OrderRepository : IOrderRepository
+    public class OrderRepository : IOrderRepository
     {
         #region DependecyInjection
+
         private readonly DataContext _context;
         private readonly IGenericRepository _genericRepo;
 
@@ -22,14 +23,14 @@ namespace Tradingcenter.Data.Repositories
         }
         #endregion
 
-        public async Task<List<Order>> SaveOrders(List<Order> orders)
+        public async Task<List<Order>> SaveOrdersAsync(List<Order> orders)
         {
             var savedOrders = new List<Order>();
 
             foreach(var order in orders)
             {
-                var orderFromDB = await _context.Orders.FirstOrDefaultAsync(x => x.OrderId == order.OrderId && x.Exchange == order.Exchange);
-                if(orderFromDB != null)
+                var orderFromDB = await _context.Orders.FirstOrDefaultAsync(x => x.ExchangeOrderId == order.ExchangeOrderId && x.Exchange == order.Exchange);
+                if(orderFromDB == null)
                 {
                     await _genericRepo.AddAsync(order);
                     savedOrders.Add(order);
@@ -55,7 +56,7 @@ namespace Tradingcenter.Data.Repositories
         public async Task<List<Order>> GetOrdersFromUserIdAsync(int userId, DateTime dateFrom, DateTime dateTo)
         {
             var orderList = await _context.Orders.Where(x =>
-                x.PortfolioId == userId &&
+                x.UserId == userId &&
                 x.Timestamp > dateFrom &&
                 x.Timestamp < dateTo).ToListAsync();
 

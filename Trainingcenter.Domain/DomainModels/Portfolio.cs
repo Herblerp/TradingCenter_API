@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Trainingcenter.Domain.DomainModels
@@ -9,6 +10,7 @@ namespace Trainingcenter.Domain.DomainModels
         public int PortfolioId { get; set; }
         public int UserId { get; set; }
 
+        [Required]
         public string Name { get; set; }
         public string Description { get; set; }
         public string Goal { get; set; }

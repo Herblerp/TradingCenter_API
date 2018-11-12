@@ -3,7 +3,7 @@ using Trainingcenter.Domain.DomainModels;
 
 namespace Tradingcenter.Data
 {
-    class DataContext : DbContext
+    public class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 

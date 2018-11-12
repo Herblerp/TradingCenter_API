@@ -6,10 +6,11 @@ using Trainingcenter.Domain.DTOs.UserDTOs;
 
 namespace Trainingcenter.Domain.Services
 {
-    interface IUserServices
+    public interface IUserServices
     {
         Task<UserDTO> Register(UserToRegisterDTO userToRegister);
         Task<UserDTO> Login(UserToLoginDTO userToLogin);
         Task<bool> UserExists(string username);
+        bool IsValidEmail(string email);
     }
 }

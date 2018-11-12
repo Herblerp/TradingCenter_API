@@ -6,7 +6,7 @@ using Trainingcenter.Domain.DomainModels;
 
 namespace Trainingcenter.Domain.Repositories
 {
-    interface IUserRepository
+    public interface IUserRepository
     {
         Task<User> GetFromIdAsync(int userId);
         Task<User> GetFromUsernameAsync(string username);

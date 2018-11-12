@@ -8,7 +8,7 @@ using Trainingcenter.Domain.Repositories;
 
 namespace Trainingcenter.Domain.Services.UserServices
 {
-    class UserServices : IUserServices
+    public class UserServices : IUserServices
     {
         #region DependencyInjection
 
@@ -23,17 +23,14 @@ namespace Trainingcenter.Domain.Services.UserServices
 
         #endregion
 
-        #region ServiceMethods
+        #region Services
         public async Task<UserDTO> Login(UserToLoginDTO userToLogin)
         {
             try
             {
-
-                //Get the user
                 userToLogin.Username = userToLogin.Username.ToLower();
                 var userFromDB = await _userRepo.GetFromUsernameAsync(userToLogin.Username);
 
-                //Validate credentials
                 if (userFromDB == null)
                 {
                     return null;
@@ -57,16 +54,6 @@ namespace Trainingcenter.Domain.Services.UserServices
 
                 //Set username to lowercase
                 userToRegister.Username = userToRegister.Username.ToLower();
-
-                //Check input
-                if (await UserExists(userToRegister.Username))
-                {
-                    return null;
-                }
-                if (IsValidEmail(userToRegister.Email))
-                {
-                    return null;
-                }
 
                 //Hash password
                 byte[] passwordHash, passwordSalt;
@@ -111,11 +98,8 @@ namespace Trainingcenter.Domain.Services.UserServices
             }
             return true;
         }
-        #endregion
 
-        #region Helpers
-
-        private bool IsValidEmail(string email)
+        public bool IsValidEmail(string email)
         {
             try
             {
@@ -127,6 +111,10 @@ namespace Trainingcenter.Domain.Services.UserServices
                 return false;
             }
         }
+
+        #endregion
+
+        #region Helpers
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {

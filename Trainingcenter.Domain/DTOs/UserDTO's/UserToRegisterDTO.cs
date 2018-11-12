@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Trainingcenter.Domain.DTOs.UserDTOs
 {
-    class UserToRegisterDTO
+    public class UserToRegisterDTO
     {
         [Required]
         public string Username { get; set; }

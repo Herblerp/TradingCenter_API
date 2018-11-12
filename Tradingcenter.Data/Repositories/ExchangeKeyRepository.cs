@@ -1,22 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.Repositories;
 
 namespace Tradingcenter.Data.Repositories
 {
-    class ExchangeKeyRepository : IExchangeKeyRepository
+    public class ExchangeKeyRepository : IExchangeKeyRepository
     {
+        #region DependecyInjection
+
         private readonly DataContext _context;
 
         public ExchangeKeyRepository(DataContext context)
         {
             _context = context;
         }
+
+        #endregion
 
         public async Task<ExchangeKey> GetFromNameAsync(string name, int userId)
         {

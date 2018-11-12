@@ -34,7 +34,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
             orderList.Concat(await GetBitMEXOrdersFromUserId(userId));
             //orderList.Concat(await GetBinanceOrdersFromUserId(userId));
 
-            var savedOrders = await _orderRepo.SaveOrders(orderList);
+            var savedOrders = await _orderRepo.SaveOrdersAsync(orderList);
 
             return savedOrders;
         }
@@ -55,7 +55,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
             orderList.Concat(await GetBinanceOrdersFromUserId(userId, BinanceKey.LastId));
 
             //Save the orders
-            var savedOrders = await _orderRepo.SaveOrders(orderList);
+            var savedOrders = await _orderRepo.SaveOrdersAsync(orderList);
 
             return savedOrders;
         }

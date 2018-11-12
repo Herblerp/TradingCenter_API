@@ -6,7 +6,7 @@ using Trainingcenter.Domain.Repositories;
 
 namespace Tradingcenter.Data.Repositories
 {
-    class GenericRepository : IGenericRepository
+    public class GenericRepository : IGenericRepository
     {
         private readonly DataContext _context;
 

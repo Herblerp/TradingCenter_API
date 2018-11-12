@@ -4,14 +4,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradingcenter.API", "Tradingcenter.API\Tradingcenter.API.csproj", "{AD106E09-B858-4BDD-BB97-A6B0110F1D42}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D6C06340-0E30-4A00-AA22-AD570B4A97BE} = {D6C06340-0E30-4A00-AA22-AD570B4A97BE}
+		{60F30EEF-D027-481E-AEDF-F36DF562930F} = {60F30EEF-D027-481E-AEDF-F36DF562930F}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tradingcenter.Data", "Tradingcenter.Data\Tradingcenter.Data.csproj", "{60F30EEF-D027-481E-AEDF-F36DF562930F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trainingcenter.Domain", "Trainingcenter.Domain\Trainingcenter.Domain.csproj", "{D6C06340-0E30-4A00-AA22-AD570B4A97BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Binance.API", "Binance.API\Binance.API.csproj", "{D6E2F224-779F-4F32-AD4D-C87686F08D4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Binance.API", "Binance.API\Binance.API.csproj", "{D6E2F224-779F-4F32-AD4D-C87686F08D4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitMEX.API", "BitMEX.API\BitMEX.API.csproj", "{705C20B8-B083-48AD-B945-C48626C65BE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BitMEX.API", "BitMEX.API\BitMEX.API.csproj", "{705C20B8-B083-48AD-B945-C48626C65BE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
