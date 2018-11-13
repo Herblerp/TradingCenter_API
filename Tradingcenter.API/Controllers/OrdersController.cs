@@ -31,10 +31,13 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
-                    int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                    var orderList = await _orderServices.GetOrders(userId, portfolioId, amount, dateFrom, dateTo);
-
-                    return StatusCode(200, orderList);
+                int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var orderList = await _orderServices.GetOrders(userId, portfolioId, amount, dateFrom, dateTo);
+                if (orderList == null)
+                {
+                    return StatusCode(401, "Invalid input");
+                }
+                return StatusCode(200, orderList);
             }
             catch
             {

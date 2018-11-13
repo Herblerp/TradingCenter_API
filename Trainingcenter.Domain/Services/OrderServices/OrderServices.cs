@@ -17,11 +17,13 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
         private readonly IOrderRepository _orderRepo;
         private readonly IExchangeKeyRepository _keyRepo;
+        private readonly IPortfolioRepository _portfolioRepo;
 
-        public OrderServices(IOrderRepository orderRepo, IExchangeKeyRepository keyRepo, IGenericRepository genericRepo)
+        public OrderServices(IOrderRepository orderRepo, IExchangeKeyRepository keyRepo, IGenericRepository genericRepo, IPortfolioRepository portfolioRepo)
         {
             _orderRepo = orderRepo;
             _keyRepo = keyRepo;
+            _portfolioRepo = portfolioRepo;
         }
 
         #endregion
@@ -119,11 +121,25 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
         public async Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, DateTime dateFrom, DateTime dateTo)
         {
-            var orderList = new List<Order>();
-            if(amount == 0)
+            if(amount > 200)
+            {
+                return null;
+            }
+            if (amount == 0)
             {
                 amount = 200;
             }
+
+            var portfolio = await _portfolioRepo.GetFromIdAsync(portfolioId);
+            if (portfolioId != 0)
+            {
+                if (portfolio == null || portfolio.UserId != userId)
+                {
+                    return null;
+                }
+            }
+
+            var orderList = new List<Order>();
             if (dateFrom == DateTime.MinValue)
             {
                 if(portfolioId == 0)
