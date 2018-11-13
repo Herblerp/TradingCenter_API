@@ -13,6 +13,7 @@ using Tradingcenter.Data;
 using Tradingcenter.Data.Repositories;
 using Trainingcenter.Domain.Repositories;
 using Trainingcenter.Domain.Services;
+using Trainingcenter.Domain.Services.OrderServices;
 using Trainingcenter.Domain.Services.PortfolioServices;
 using Trainingcenter.Domain.Services.UserServices;
 
@@ -40,6 +41,9 @@ namespace Tradingcenter.API.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPortfolioServices, PortfolioServices>();
             services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+            services.AddScoped<IOrderServices, OrderServices>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IExchangeKeyRepository, ExchangeKeyRepository>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)

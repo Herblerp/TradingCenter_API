@@ -26,11 +26,10 @@ namespace Tradingcenter.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureConnections(Configuration);
+            services.ConfigureAuthentication(Configuration);
             services.ConfigureMvc();
             services.AddCors();
             services.ConfigureRepositories();
-            services.ConfigureAuthentication(Configuration);
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,6 +39,7 @@ namespace Tradingcenter.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseAuthentication();
             app.ConfigureExceptionHandler();
             app.ConfigureCors();
             app.UseMvc();

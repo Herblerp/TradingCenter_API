@@ -13,5 +13,6 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
         Task<PortfolioDTO> CreateDefaultPortfolio(int userId);
         Task<PortfolioDTO> UpdatePortfolio(PortfolioToUpdateDTO portfolioToUpdate, int userId);
         Task<bool> PortfolioExists(string name, int userId);
+        Task<int> GetPortfolioId(string name, int userId);
     }
 }

@@ -6,11 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
+using Trainingcenter.Domain.DTOs.OrderDTO_s;
 using Trainingcenter.Domain.Repositories;
 
 namespace Trainingcenter.Domain.Services.OrderServices
 {
-    class OrderServices : IOrderServices
+    public class OrderServices : IOrderServices
     {
         #region DependencyInjection
 
@@ -116,41 +117,44 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
         #region Services
 
-        //Returns a sorted list of all orders from a given userId
-        public async Task<List<Order>> GetOrdersFromUserId(int userId)
+        public async Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, DateTime dateFrom, DateTime dateTo)
         {
-            var orderList = await _orderRepo.GetOrdersFromUserIdAsync(userId);
+            var orderList = new List<Order>();
+            if(amount == 0)
+            {
+                amount = 200;
+            }
+            if (dateFrom == DateTime.MinValue)
+            {
+                if(portfolioId == 0)
+                {
+                    orderList = await _orderRepo.GetOrdersFromUserIdAsync(userId);
+                }
+                orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolioId);
+            }
+            else
+            {
+                if(dateTo == DateTime.MinValue)
+                {
+                    dateTo = DateTime.Now;
+                }
+                if (portfolioId == 0)
+                {
+                    orderList = await _orderRepo.GetOrdersFromUserIdAsync(userId, dateFrom, dateTo);
+                }
+                orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolioId, dateFrom, dateTo);
+            }
             orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
+            orderList = orderList.Take(amount).ToList();
 
-            return orderList;
+            var orderDTOList = new List<OrderDTO>();
+            foreach(Order order in orderList)
+            {
+                orderDTOList.Add(ConvertOrder(order));
+            }
+            return orderDTOList;
         }
 
-        //Returns a sorted list of all orders from a given portfolioId
-        public async Task<List<Order>> GetOrdersFromPortfolioId(int portfolioId)
-        {
-            var orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolioId);
-            orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
-
-            return orderList;
-        }
-
-        //Returns a sorted list of all orders within a given timerange from a given userId
-        public async Task<List<Order>> GetOrdersFromUserId(int userId, DateTime dateFrom, DateTime dateTo)
-        {
-            var orderList = await _orderRepo.GetOrdersFromUserIdAsync(userId, dateFrom, dateTo);
-            orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
-
-            return orderList;
-        }
-
-        //Returns a sorted list of all orders within a given timerange from a given portfolioId
-        public async Task<List<Order>> GetOrdersFromPortfolioId(int portfolioId, DateTime dateFrom, DateTime dateTo)
-        {
-            var orderList = await _orderRepo.GetOrdersFromUserIdAsync(portfolioId, dateFrom, dateTo);
-            orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
-
-            return orderList;
-        }
         #endregion
 
         #region Converters
@@ -172,6 +176,25 @@ namespace Trainingcenter.Domain.Services.OrderServices
                 Timestamp = DateTime.Parse(bitMEXOrder.timestamp)
             };
             return order;
+        }
+
+        private OrderDTO ConvertOrder(Order order)
+        {
+
+            //TODO: Add checks for double values
+
+            var orderDTO = new OrderDTO
+            {
+                PortfolioId = order.PortfolioId,
+                Exchange = order.Exchange,
+                ExchangeOrderId = order.ExchangeOrderId,
+                Symbol = order.Symbol,
+                OrderQty = order.OrderQty,
+                Currency = order.Currency,
+                Price = order.Price,
+                Timestamp = order.Timestamp
+            };
+            return orderDTO;
         }
 
         #endregion

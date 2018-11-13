@@ -73,6 +73,13 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             return true;
         }
 
+        public async Task<int> GetPortfolioId(string name, int userId)
+        {
+            var portfolio = await _portfolioRepo.GetFromNameAsync(name, userId);
+
+            return portfolio.PortfolioId;
+        }
+
         #endregion
 
         #region Helpers

@@ -78,11 +78,11 @@ namespace Tradingcenter.API.Controllers
             {
                 if (await _userService.UserExists(userToRegister.Username))
                 {
-                    return StatusCode(201, "Username already taken");
+                    return StatusCode(400, "Username already taken");
                 }
                 if (!_userService.IsValidEmail(userToRegister.Email))
                 {
-                    return StatusCode(201, "Invalid email");
+                    return StatusCode(400, "Invalid email");
                 }
                 var user = await _userService.Register(userToRegister);
                 return StatusCode(200);

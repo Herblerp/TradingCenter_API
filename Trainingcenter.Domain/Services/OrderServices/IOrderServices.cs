@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
+using Trainingcenter.Domain.DTOs.OrderDTO_s;
 
 namespace Trainingcenter.Domain.Services.OrderServices
 {
-    interface IOrderServices
+    public interface IOrderServices
     {
-        //Get orders from database
-        Task<List<Order>> GetOrdersFromUserId(int userId);
-        Task<List<Order>> GetOrdersFromPortfolioId(int userId);
-        Task<List<Order>> GetOrdersFromUserId(int userId, DateTime dateFrom, DateTime dateTo);
-        Task<List<Order>> GetOrdersFromPortfolioId(int userId, DateTime dateFrom, DateTime dateTo);
+        //Service methods
+        Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, DateTime dateFrom, DateTime dateTo);
 
-        //Get orders from exchanges
+        //Exchange methods
         Task<List<Order>> GetAllOrders(int userId);
         Task<List<Order>> RefreshAllOrders(int userId);
         Task<List<Order>> GetBitMEXOrdersFromUserId(int userId);
