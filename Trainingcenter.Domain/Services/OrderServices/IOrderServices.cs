@@ -10,7 +10,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
     public interface IOrderServices
     {
         //Service methods
-        Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, DateTime dateFrom, DateTime dateTo);
+        Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, string dateFrom, string dateTo);
 
         //Exchange methods
         Task<List<Order>> GetAllOrders(int userId);

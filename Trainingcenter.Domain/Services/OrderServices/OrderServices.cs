@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -119,9 +120,12 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
         #region Services
 
-        public async Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, DateTime dateFrom, DateTime dateTo)
+        public async Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, string dateFrom, string dateTo)
         {
-            if(amount > 200)
+            DateTime _dateFrom;
+            DateTime _dateTo;
+
+            if (amount > 200)
             {
                 return null;
             }
@@ -130,9 +134,9 @@ namespace Trainingcenter.Domain.Services.OrderServices
                 amount = 200;
             }
 
-            var portfolio = await _portfolioRepo.GetFromIdAsync(portfolioId);
             if (portfolioId != 0)
             {
+                var portfolio = await _portfolioRepo.GetFromIdAsync(portfolioId);
                 if (portfolio == null || portfolio.UserId != userId)
                 {
                     return null;
@@ -140,25 +144,52 @@ namespace Trainingcenter.Domain.Services.OrderServices
             }
 
             var orderList = new List<Order>();
-            if (dateFrom == DateTime.MinValue)
+            if (dateFrom == null)
             {
                 if(portfolioId == 0)
                 {
                     orderList = await _orderRepo.GetOrdersFromUserIdAsync(userId);
                 }
-                orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolioId);
+                else
+                {
+                    orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolioId);
+                }
             }
             else
             {
-                if(dateTo == DateTime.MinValue)
+                try
                 {
-                    dateTo = DateTime.Now;
+                    _dateFrom = DateTime.ParseExact(dateFrom, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 }
+                catch
+                {
+                    return null;
+                }
+
+                if (dateTo == null)
+                {
+                    _dateTo = DateTime.Now;
+                }
+                else
+                {
+                    try
+                    {
+                        _dateTo = DateTime.ParseExact(dateTo, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
+
                 if (portfolioId == 0)
                 {
-                    orderList = await _orderRepo.GetOrdersFromUserIdAsync(userId, dateFrom, dateTo);
+                    orderList = await _orderRepo.GetOrdersFromUserIdAsync(userId, _dateFrom, _dateTo);
                 }
-                orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolioId, dateFrom, dateTo);
+                else
+                {
+                    orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolioId, _dateFrom, _dateTo);
+                }
             }
             orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
             orderList = orderList.Take(amount).ToList();

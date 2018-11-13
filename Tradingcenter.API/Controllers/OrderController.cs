@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -15,19 +16,19 @@ namespace Tradingcenter.API.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController : ControllerBase
+    public class OrderController : ControllerBase
     {
         private readonly IOrderServices _orderServices;
         private readonly IPortfolioServices _portfolioServices;
 
-        public OrdersController(IOrderServices orderService, IPortfolioServices portfolioServices)
+        public OrderController(IOrderServices orderService, IPortfolioServices portfolioServices)
         {
             _orderServices = orderService;
             _portfolioServices = portfolioServices;
         }
 
         [HttpGet("get")]
-        public async Task<IActionResult> GetOrders(int portfolioId, int amount, DateTime dateFrom, DateTime dateTo)
+        public async Task<IActionResult> GetOrders(int portfolioId, int amount, string dateFrom, string dateTo)
         {
             try
             {
