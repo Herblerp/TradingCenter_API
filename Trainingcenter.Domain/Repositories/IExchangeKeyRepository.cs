@@ -8,7 +8,8 @@ namespace Trainingcenter.Domain.Repositories
 {
     public interface IExchangeKeyRepository
     {
-        Task<ExchangeKey> GetFromNameAsync(string name, int userId);
-        Task<List<ExchangeKey>> GetAllFromUserIdAsync(int userId);
+        Task<ExchangeKey> GetKeyFromKeyStrAsync(string name, string keyStr, int userId);
+        Task<List<ExchangeKey>> GetKeysFromNameAsync(string name, int userId);
+        Task<List<ExchangeKey>> GetKeysFromUserIdAsync(int userId);
     }
 }

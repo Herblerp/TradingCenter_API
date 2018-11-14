@@ -15,9 +15,9 @@ namespace Trainingcenter.Domain.Services.OrderServices
         //Exchange methods
         Task<List<Order>> GetAllOrders(int userId);
         Task<List<Order>> RefreshAllOrders(int userId);
-        Task<List<Order>> GetBitMEXOrdersFromUserId(int userId);
-        Task<List<Order>> GetBitMEXOrdersFromUserId(int userId, DateTime dateFrom);
+        Task<List<Order>> GetBitMEXOrdersFromUserId(int userId, int portfolioId);
+        Task<List<Order>> GetBitMEXOrdersFromUserId(int userId, int portfolioId, DateTime dateFrom);
         Task<List<Order>> GetBinanceOrdersFromUserId(int userId);
-        Task<List<Order>> GetBinanceOrdersFromUserId(int userId, int lastOrderId);
+        Task<List<Order>> GetBinanceOrdersFromUserId(int userId, int portFolioId, int lastOrderId);
     }
 }

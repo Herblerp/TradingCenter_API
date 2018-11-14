@@ -45,5 +45,12 @@ namespace Tradingcenter.API.Controllers
                 return StatusCode(500, "Something went wrong while attempting to get orders");
             }
         }
+        [HttpGet("refresh")]
+        public async Task<IActionResult> RefreshOrders()
+        {
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            await _orderServices.RefreshAllOrders(userId);
+            return StatusCode(200);
+        }
     }
 }

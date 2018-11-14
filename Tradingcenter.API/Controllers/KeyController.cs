@@ -25,16 +25,12 @@ namespace Tradingcenter.API.Controllers
 
         // GET: api/Key
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string name)
         {
             try {
                 int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var keyList = await _keyService.GetExchangeKeys(userId);
+                var keyList = await _keyService.GetExchangeKeys(name, userId);
 
-                if (keyList == null)
-                {
-                    return StatusCode(204, "No keys were found");
-                }
                 return StatusCode(200, keyList);
             }
             catch
@@ -47,22 +43,30 @@ namespace Tradingcenter.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(ExchangeKeyToCreateDTO key)
         {
-            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            await _keyService.CreateExchangeKey(key, userId);
+            try
+            {
+                if (key.Name != "BitMEX" && key.Name != "Binance")
+                {
+                    return StatusCode(400, "Name must have one of the following values: BitMEX, Binance");
+                }
+                int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return StatusCode(200,"All gud");
-        }
+                if(await _keyService.KeyExists(key.Name, key.Key, userId))
+                {
+                    return StatusCode(400, "Duplicate key");
+                }
 
-        // PUT: api/Key/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+                bool created = await _keyService.CreateExchangeKey(key, userId);
+                if (created)
+                {
+                    return StatusCode(200);
+                }
+                return StatusCode(500, "Falied to save key");
+            }
+            catch
+            {
+                return StatusCode(500, "Something went wrong while attempting to create a key");
+            }
         }
     }
 }

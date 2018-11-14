@@ -24,12 +24,23 @@ namespace Trainingcenter.Domain.Services.ExchangeKeyServices
 
         #endregion
 
-        public async Task<List<ExchangeKeyDTO>> GetExchangeKeys(int userId)
+        #region Services
+
+        public async Task<List<ExchangeKeyDTO>> GetExchangeKeys(string name, int userId)
         {
-            var keyList = await _keyRepo.GetAllFromUserIdAsync(userId);
+            var keyList = new List<ExchangeKey>();
+
+            if (name == null)
+            {
+                keyList = await _keyRepo.GetKeysFromUserIdAsync(userId);
+            }
+            else
+            {
+                keyList = await _keyRepo.GetKeysFromNameAsync(name, userId);
+            }
             var keyDTOList = new List<ExchangeKeyDTO>();
 
-            foreach(ExchangeKey key in keyList)
+            foreach (ExchangeKey key in keyList)
             {
                 keyDTOList.Add(ConvertExchangeKey(key));
             }
@@ -37,17 +48,34 @@ namespace Trainingcenter.Domain.Services.ExchangeKeyServices
             return keyDTOList;
         }
 
-        public async Task<ExchangeKeyDTO> CreateExchangeKey(ExchangeKeyToCreateDTO key, int userId)
+        public async Task<bool> CreateExchangeKey(ExchangeKeyToCreateDTO key, int userId)
         {
-            //CHeck exchange name
+            try
+            {
+                var keyToCreate = ConvertExchangeKeyToCreate(key);
+                keyToCreate.UserId = userId;
 
-            var keyToCreate = ConvertExchangeKeyToCreate(key);
-            keyToCreate.UserId = userId;
+                await _genericRepo.AddAsync(keyToCreate);
 
-            await _genericRepo.AddAsync(keyToCreate);
-
-            return ConvertExchangeKey(keyToCreate);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
+
+        public async Task<bool> KeyExists(string name, string keyStr, int userId)
+        {
+            var key = await _keyRepo.GetKeyFromKeyStrAsync(name, keyStr, userId);
+            if (key == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        #endregion
 
         #region Converters
 

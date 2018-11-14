@@ -21,16 +21,23 @@ namespace Tradingcenter.Data.Repositories
 
         #endregion
 
-        public async Task<ExchangeKey> GetFromNameAsync(string name, int userId)
+        public async Task<List<ExchangeKey>> GetKeysFromNameAsync(string name, int userId)
         {
-            var exchangeKey = await _context.ExchangeKeys.FirstOrDefaultAsync(x => x.Name == name && x.UserId == userId);
-            return exchangeKey;
+            var exchangeKeyList = await _context.ExchangeKeys.Where(x => x.UserId == userId && x.Name == name).ToListAsync();
+            return exchangeKeyList;
         }
 
-        public async Task<List<ExchangeKey>> GetAllFromUserIdAsync(int userId)
+        public async Task<List<ExchangeKey>> GetKeysFromUserIdAsync(int userId)
         {
             var exchangeKeyList = await _context.ExchangeKeys.Where(x => x.UserId == userId).ToListAsync();
             return exchangeKeyList;
         }
+
+        public async Task<ExchangeKey> GetKeyFromKeyStrAsync(string name, string keyStr, int userId)
+        {
+            var exchangeKey = await _context.ExchangeKeys.FirstOrDefaultAsync(x => x.Name == name && x.Key == keyStr && x.UserId == userId);
+            return exchangeKey;
+        }
+
     }
 }
