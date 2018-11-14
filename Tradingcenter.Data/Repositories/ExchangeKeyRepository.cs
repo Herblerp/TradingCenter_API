@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.Repositories;
+using Trainingcenter.Domain.Services.ExchangeKeyServices;
 
 namespace Tradingcenter.Data.Repositories
 {
