@@ -16,7 +16,7 @@ namespace Trainingcenter.Domain.DomainModels
         public string Goal { get; set; }
 
         public ICollection<Note> Notes { get; set; }
-        public ICollection<Order> Orders { get; set; }
+        public ICollection<OrderPortfolio> PortfolioOrders { get; set; }
 
         public User User { get; set; }
     }

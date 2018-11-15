@@ -76,10 +76,23 @@ namespace Trainingcenter.Domain.Services.OrderServices
             {
                 orderList.AddRange(await GetBinanceOrdersFromUserId(userId, portfolioId, key.LastId));
             }
+            foreach (Order order in orderList)
+            {
+
+            }
 
             //Save the orders
             var savedOrders = await _orderRepo.SaveOrdersAsync(orderList);
 
+            foreach(Order order in savedOrders)
+            {
+                var orderPortfolio = new OrderPortfolio
+                {
+                    PortfolioId = portfolioId,
+                    OrderId = order.OrderId
+                };
+                await _genericRepo.AddAsync(orderPortfolio);
+            }
             return savedOrders;
         }
 
@@ -110,7 +123,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
                 foreach (var BitMEXOrder in BitMEXOrderList)
                 {
-                    Order order = ConvertBitMEXOrder(BitMEXOrder, userId, portfolioId);
+                    Order order = ConvertBitMEXOrder(BitMEXOrder, userId);
                     orderList.Add(order);
                 }
             }
@@ -136,7 +149,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
                     var BitMEXOrderList = JsonConvert.DeserializeObject<List<BitMEXOrder>>(temp);
                     foreach (var BitMEXOrder in BitMEXOrderList)
                     {
-                        Order order = ConvertBitMEXOrder(BitMEXOrder, userId, portfolioId);
+                        Order order = ConvertBitMEXOrder(BitMEXOrder, userId);
                         orderList.Add(order);
                     }
                 }
@@ -238,7 +251,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
         #region Converters
 
-        private Order ConvertBitMEXOrder(BitMEXOrder bitMEXOrder, int userId, int portfolioId)
+        private Order ConvertBitMEXOrder(BitMEXOrder bitMEXOrder, int userId)
         {
 
             //TODO: Add checks for double values
@@ -246,7 +259,6 @@ namespace Trainingcenter.Domain.Services.OrderServices
             var order = new Order
             {
                 UserId = userId,
-                PortfolioId = portfolioId,
                 Exchange = "BitMEX",
                 ExchangeOrderId = bitMEXOrder.orderID,
                 Symbol = bitMEXOrder.symbol.Substring(0, 3),
@@ -266,7 +278,6 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             var orderDTO = new OrderDTO
             {
-                PortfolioId = order.PortfolioId,
                 Exchange = order.Exchange,
                 ExchangeOrderId = order.ExchangeOrderId,
                 Symbol = order.Symbol,

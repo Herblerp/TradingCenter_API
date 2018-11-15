@@ -9,7 +9,6 @@ namespace Trainingcenter.Domain.DomainModels
     {
         public int OrderId { get; set; }
         public int UserId { get; set; }
-        public int PortfolioId { get; set; }
 
         [Required]
         public string Exchange { get; set; }
@@ -30,6 +29,7 @@ namespace Trainingcenter.Domain.DomainModels
         public User User { get; set; }
         public Portfolio Portfolio { get; set; }
 
+        public ICollection<OrderPortfolio> OrderPortfolios { get; set; }
         public ICollection<Comment> Comments { get; set; }
     }
 }
