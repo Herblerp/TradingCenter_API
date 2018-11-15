@@ -15,21 +15,25 @@ namespace Tradingcenter.Data.Repositories
             _context = context;
         }
 
-        public async Task AddAsync<T>(T entity) where T : class
+        public async Task<T> AddAsync<T>(T entity) where T : class
         {
             _context.Add(entity);
             await _context.SaveChangesAsync();
+
+            return entity;
+        }
+
+        public async Task<T> UpdateAsync<T>(T entity) where T : class
+        {
+            _context.Update(entity);
+            await _context.SaveChangesAsync();
+
+            return entity;
         }
 
         public async Task DeleteAsync<T>(T entity) where T : class
         {
             _context.Remove(entity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync<T>(T entity) where T : class
-        {
-            _context.Update(entity);
             await _context.SaveChangesAsync();
         }
     }

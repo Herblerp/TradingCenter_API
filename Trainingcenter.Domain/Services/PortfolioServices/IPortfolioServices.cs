@@ -9,10 +9,9 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
 {
     public interface IPortfolioServices
     {
-        Task<PortfolioDTO> CreatePortfolio(PortfolioToCreateDTO portfolioToCreate, int userId);
-        Task<PortfolioDTO> CreateDefaultPortfolio(int userId);
-        Task<PortfolioDTO> UpdatePortfolio(PortfolioToUpdateDTO portfolioToUpdate, int userId);
-        Task<bool> PortfolioExists(string name, int userId);
-        Task<int> GetPortfolioId(string name, int userId);
+        Task<List<PortfolioDTO>> GetAllPortfolioByUserIdAsync(int userId);
+        Task<PortfolioDTO> CreatePortfolioAsync(PortfolioToCreateDTO portfolioToCreate, int userId);
+        Task<PortfolioDTO> UpdatePortfolioAsync(PortfolioDTO portfolioToUpdate);
+        Task<bool> DeletePortfolioAsync(int portfolioId);
     }
 }

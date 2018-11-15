@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.DTOs.PortfolioDTO_s;
@@ -23,7 +24,19 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
 
         #region Services
 
-        public async Task<PortfolioDTO> CreatePortfolio(PortfolioToCreateDTO portfolioToCreate, int userId)
+        public async Task<List<PortfolioDTO>> GetAllPortfolioByUserIdAsync(int userId)
+        {
+            var portfolioList = await _portfolioRepo.GetAllPortfolioByUserIdAsync(userId);
+            var portfolioDTOList = new List<PortfolioDTO>();
+
+            foreach(Portfolio portfolio in portfolioList)
+            {
+                portfolioDTOList.Add(ConvertPortfolio(portfolio));
+            }
+            return portfolioDTOList;
+        }
+
+        public async Task<PortfolioDTO> CreatePortfolioAsync(PortfolioToCreateDTO portfolioToCreate, int userId)
         {
             var portfolio = new Portfolio
             {
@@ -32,63 +45,40 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
                 Description = portfolioToCreate.Description,
                 Goal = portfolioToCreate.Goal
             };
-
-            await _genericRepo.AddAsync(portfolio);
-            return Convert(portfolioToCreate);
+            return ConvertPortfolio(await _genericRepo.AddAsync(portfolio));
         }
 
-        public async Task<PortfolioDTO> CreateDefaultPortfolio(int userId)
+        public async Task<PortfolioDTO> UpdatePortfolioAsync(PortfolioDTO portfolioToUpdate)
         {
-            var portfolio = new Portfolio
-            {
-                UserId = userId,
-                Name = "default"
-            };
-
-            await _genericRepo.AddAsync(portfolio);
-
-            return Convert(portfolio);
-        }
-
-        public async Task<PortfolioDTO> UpdatePortfolio(PortfolioToUpdateDTO portfolioToUpdate, int userId)
-        {
-            var portfolio = await _portfolioRepo.GetFromNameAsync(portfolioToUpdate.Name, userId);
+            var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioToUpdate.PortfoliId);
 
             portfolio.Name = portfolioToUpdate.Name;
             portfolio.Description = portfolioToUpdate.Description;
             portfolio.Goal = portfolioToUpdate.Goal;
 
-            await _genericRepo.UpdateAsync(portfolio);
-
-            return Convert(portfolio);
+            return ConvertPortfolio(await _genericRepo.UpdateAsync(portfolio));
         }
 
-        public async Task<bool> PortfolioExists(string name, int userId)
+        public async Task<bool> DeletePortfolioAsync(int portfolioId)
         {
-            var portfolio = await _portfolioRepo.GetFromNameAsync(name, userId);
-            if (portfolio == null)
+            var portfolio = _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
+
+            try
+            {
+                await _genericRepo.DeleteAsync(portfolio);
+                return true;
+            }
+            catch
             {
                 return false;
             }
-            return true;
         }
-
-        public async Task<int> GetPortfolioId(string name, int userId)
-        {
-            var portfolio = await _portfolioRepo.GetFromNameAsync(name, userId);
-
-            return portfolio.PortfolioId;
-        }
-
-        #endregion
-
-        #region Helpers
 
         #endregion
 
         #region Converters
 
-        private PortfolioDTO Convert(Portfolio portfolio)
+        private PortfolioDTO ConvertPortfolio(Portfolio portfolio)
         {
             var portfolioDTO = new PortfolioDTO
             {
@@ -97,17 +87,6 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
                 Goal = portfolio.Goal
             };
             return portfolioDTO;
-        }
-
-        private PortfolioDTO Convert(PortfolioToCreateDTO portfolioToCreate)
-        {
-            var portfolio = new PortfolioDTO
-            {
-                Name = portfolioToCreate.Name,
-                Description = portfolioToCreate.Description,
-                Goal = portfolioToCreate.Goal
-            };
-            return portfolio;
         }
 
         #endregion

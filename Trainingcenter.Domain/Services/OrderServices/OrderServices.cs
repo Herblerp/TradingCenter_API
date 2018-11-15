@@ -181,7 +181,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             if (portfolioId != 0)
             {
-                var portfolio = await _portfolioRepo.GetFromIdAsync(portfolioId);
+                var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
                 if (portfolio == null || portfolio.UserId != userId)
                 {
                     return null;

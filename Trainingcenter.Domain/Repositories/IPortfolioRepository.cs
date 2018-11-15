@@ -8,9 +8,9 @@ namespace Trainingcenter.Domain.Repositories
 {
     public interface IPortfolioRepository
     {
-        Task<Portfolio> GetFromIdAsync(int portfolioId);
+        Task<Portfolio> GetPortfolioByIdAsync(int portfolioId);
         Task<Portfolio> GetFromNameAsync(string name, int userId);
 
-        Task<List<Portfolio>> GetAllFromUserIdAsync(int userId);
+        Task<List<Portfolio>> GetAllPortfolioByUserIdAsync(int userId);
     }
 }

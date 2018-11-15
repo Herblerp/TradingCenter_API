@@ -18,13 +18,13 @@ namespace Tradingcenter.Data.Repositories
             _context = context;
         }
 
-        public async Task<List<Portfolio>> GetAllFromUserIdAsync(int userId)
+        public async Task<List<Portfolio>> GetAllPortfolioByUserIdAsync(int userId)
         {
             var portfolios = await _context.Portfolios.Where(x => x.UserId == userId).ToListAsync();
             return portfolios;
         }
 
-        public async Task<Portfolio> GetFromIdAsync(int portfolioId)
+        public async Task<Portfolio> GetPortfolioByIdAsync(int portfolioId)
         {
             var portfolio = await _context.Portfolios.FirstOrDefaultAsync(x => x.PortfolioId == portfolioId);
             return portfolio;
