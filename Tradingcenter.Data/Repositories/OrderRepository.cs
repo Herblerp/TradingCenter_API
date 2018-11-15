@@ -23,6 +23,11 @@ namespace Tradingcenter.Data.Repositories
         }
         #endregion
 
+        public async Task<Order> GetOrderById(int orderId)
+        {
+            return await _context.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
+        }
+
         public async Task<List<Order>> SaveOrdersAsync(List<Order> orders)
         {
             foreach(var order in orders)

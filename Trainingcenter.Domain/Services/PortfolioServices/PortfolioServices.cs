@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.DTOs.PortfolioDTO_s;
+using Trainingcenter.Domain.DTOs.PortfolioOrderDTOs;
 using Trainingcenter.Domain.Repositories;
 
 namespace Trainingcenter.Domain.Services.PortfolioServices
@@ -23,6 +24,11 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
         #endregion
 
         #region Services
+
+        public async Task<Portfolio> GetPortfolioByIdAsync(int portfolioId)
+        {
+            return await _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
+        }
 
         public async Task<List<PortfolioDTO>> GetAllPortfolioByUserIdAsync(int userId)
         {
@@ -50,7 +56,7 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
 
         public async Task<PortfolioDTO> UpdatePortfolioAsync(PortfolioDTO portfolioToUpdate)
         {
-            var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioToUpdate.PortfoliId);
+            var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioToUpdate.PortfolioId);
 
             portfolio.Name = portfolioToUpdate.Name;
             portfolio.Description = portfolioToUpdate.Description;
@@ -61,7 +67,7 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
 
         public async Task<bool> DeletePortfolioAsync(int portfolioId)
         {
-            var portfolio = _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
+            var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
 
             try
             {
@@ -74,14 +80,19 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             }
         }
 
-        public async Task<PortfolioOrder> AddOrderById(int portfolioId, int orderId)
+        public async Task<PortfolioOrder> AddOrderById(PortfolioOrderDTO po)
         {
             var portfolioOrder = new PortfolioOrder
             {
-                PortfolioId = portfolioId,
-                OrderId = orderId
+                OrderId = po.OrderId,
+                PortfolioId = po.PortfolioId
             };
             return await _genericRepo.AddAsync(portfolioOrder);
+        }
+
+        public async Task<bool> IsOrderInPortfolio(int orderId, int portfolioId)
+        {
+            return (await _portfolioRepo.IsOrderInPortfolio(orderId, portfolioId));
         }
 
         #endregion

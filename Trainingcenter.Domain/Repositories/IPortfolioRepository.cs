@@ -10,6 +10,7 @@ namespace Trainingcenter.Domain.Repositories
     {
         Task<Portfolio> GetPortfolioByIdAsync(int portfolioId);
         Task<Portfolio> GetDefaultPortfolioAsync(int userId);
+        Task<bool> IsOrderInPortfolio(int orderId, int portfolioId);
 
         Task<List<Portfolio>> GetAllPortfolioByUserIdAsync(int userId);
     }

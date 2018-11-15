@@ -7,7 +7,7 @@ namespace Trainingcenter.Domain.DTOs.PortfolioDTO_s
 {
     public class PortfolioDTO
     {
-        public int PortfoliId { get; set; }
+        public int PortfolioId { get; set; }
         [MaxLength(50, ErrorMessage = "Name must be shorter than 50 characters")]
         public string Name { get; set; }
         [MaxLength(500, ErrorMessage = "Description must be shorter than 500 characters")]

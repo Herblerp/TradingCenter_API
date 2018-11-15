@@ -13,6 +13,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
         Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, string dateFrom, string dateTo);
 
         //Exchange methods
+        Task<Order> GetOrderById(int orderId);
         Task<List<Order>> GetAllOrders(int userId);
         Task<List<Order>> RefreshAllOrders(int userId);
         Task<List<Order>> GetBitMEXOrdersFromUserId(int userId, int portfolioId);

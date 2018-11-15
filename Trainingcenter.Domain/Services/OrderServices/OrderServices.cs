@@ -165,6 +165,11 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
         #region Services
 
+        public async Task<Order> GetOrderById(int orderId)
+        {
+            return await _orderRepo.GetOrderById(orderId);
+        }
+
         public async Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, string dateFrom, string dateTo)
         {
             DateTime _dateFrom;

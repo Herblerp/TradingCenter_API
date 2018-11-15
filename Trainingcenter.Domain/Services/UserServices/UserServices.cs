@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
+using Trainingcenter.Domain.DTOs.PortfolioDTO_s;
 using Trainingcenter.Domain.DTOs.UserDTOs;
 using Trainingcenter.Domain.Repositories;
 using Trainingcenter.Domain.Services.PortfolioServices;
@@ -84,7 +85,11 @@ namespace Trainingcenter.Domain.Services.UserServices
                 var createdUser = await _userRepo.GetFromUsernameAsync(userToRegister.Username);
 
                 //Create default portfolio
-                await _portfolioService.CreateDefaultPortfolio(createdUser.UserId);
+                var defaultPortfolio = new PortfolioToCreateDTO
+                {
+                    Name = "default"
+                };
+                await _portfolioService.CreatePortfolioAsync(defaultPortfolio, createdUser.UserId);
 
                 var userToReturn = new UserDTO
                 {
