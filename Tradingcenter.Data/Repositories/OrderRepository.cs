@@ -61,8 +61,8 @@ namespace Tradingcenter.Data.Repositories
         {
             var orderList = await _context.Orders.Where(x =>
                 x.UserId == userId &&
-                x.Timestamp > dateFrom &&
-                x.Timestamp < dateTo).ToListAsync();
+                x.Timestamp.Date >= dateFrom.Date &&
+                x.Timestamp.Date <= dateTo.Date).ToListAsync();
 
             return orderList;
         }
@@ -74,11 +74,15 @@ namespace Tradingcenter.Data.Repositories
 
             foreach (OrderPortfolio op in orderIdList)
             {
-                orderList.Add(await _context.Orders.FirstOrDefaultAsync(x => 
+                var order = await _context.Orders.FirstOrDefaultAsync(x =>
+                    x.OrderId == op.OrderId &&
+                    x.Timestamp.Date >= dateFrom.Date &&
+                    x.Timestamp.Date <= dateTo.Date);
 
-                x.OrderId == op.OrderId && 
-                x.Timestamp > dateFrom &&
-                x.Timestamp < dateTo));
+                if (order != null)
+                { 
+                    orderList.Add(order);
+                }
             }
 
             return orderList;

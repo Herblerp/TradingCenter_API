@@ -278,6 +278,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             var orderDTO = new OrderDTO
             {
+                OrderId = order.OrderId,
                 Exchange = order.Exchange,
                 ExchangeOrderId = order.ExchangeOrderId,
                 Symbol = order.Symbol,
