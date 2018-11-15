@@ -49,7 +49,7 @@ namespace Tradingcenter.Data.Repositories
             var orderIdList = await _context.OrderPortolios.Where(x => x.PortfolioId == portfolioId).ToListAsync();
             var orderList = new List<Order>();
 
-            foreach(OrderPortfolio op in orderIdList)
+            foreach(PortfolioOrder op in orderIdList)
             {
                 orderList.Add(await _context.Orders.FirstOrDefaultAsync(x => x.OrderId == op.OrderId));
             }
@@ -72,7 +72,7 @@ namespace Tradingcenter.Data.Repositories
             var orderIdList = await _context.OrderPortolios.Where(x => x.PortfolioId == portfolioId).ToListAsync();
             var orderList = new List<Order>();
 
-            foreach (OrderPortfolio op in orderIdList)
+            foreach (PortfolioOrder op in orderIdList)
             {
                 var order = await _context.Orders.FirstOrDefaultAsync(x =>
                     x.OrderId == op.OrderId &&

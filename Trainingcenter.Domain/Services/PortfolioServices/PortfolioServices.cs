@@ -74,6 +74,16 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             }
         }
 
+        public async Task<PortfolioOrder> AddOrderById(int portfolioId, int orderId)
+        {
+            var portfolioOrder = new PortfolioOrder
+            {
+                PortfolioId = portfolioId,
+                OrderId = orderId
+            };
+            return await _genericRepo.AddAsync(portfolioOrder);
+        }
+
         #endregion
 
         #region Converters
@@ -90,8 +100,6 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
         }
 
         #endregion
-
-
 
     }
 }

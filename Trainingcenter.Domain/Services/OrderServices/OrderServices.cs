@@ -36,7 +36,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
         //Get all orders from all exchanges from a given user
         public async Task<List<Order>> GetAllOrders(int userId)
         {
-            var portfolio = await _portfolioRepo.GetFromNameAsync("default", userId);
+            var portfolio = await _portfolioRepo.GetDefaultPortfolioAsync(userId);
             int portfolioId = portfolio.PortfolioId;
 
             var orderList = new List<Order>();
@@ -52,7 +52,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
         public async Task<List<Order>> RefreshAllOrders(int userId)
         {
             //Get the default portfolio
-            var portfolio = await _portfolioRepo.GetFromNameAsync("default", userId);
+            var portfolio = await _portfolioRepo.GetDefaultPortfolioAsync(userId);
             int portfolioId = portfolio.PortfolioId;
 
             //Get the current time
@@ -86,7 +86,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             foreach(Order order in savedOrders)
             {
-                var orderPortfolio = new OrderPortfolio
+                var orderPortfolio = new PortfolioOrder
                 {
                     PortfolioId = portfolioId,
                     OrderId = order.OrderId

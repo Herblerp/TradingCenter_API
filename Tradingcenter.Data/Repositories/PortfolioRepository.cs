@@ -11,6 +11,8 @@ namespace Tradingcenter.Data.Repositories
 {
     public class PortfolioRepository : IPortfolioRepository
     {
+        #region DependecyInjection
+
         private readonly DataContext _context;
 
         public PortfolioRepository (DataContext context)
@@ -18,11 +20,7 @@ namespace Tradingcenter.Data.Repositories
             _context = context;
         }
 
-        public async Task<List<Portfolio>> GetAllPortfolioByUserIdAsync(int userId)
-        {
-            var portfolios = await _context.Portfolios.Where(x => x.UserId == userId).ToListAsync();
-            return portfolios;
-        }
+        #endregion
 
         public async Task<Portfolio> GetPortfolioByIdAsync(int portfolioId)
         {
@@ -30,11 +28,17 @@ namespace Tradingcenter.Data.Repositories
             return portfolio;
         }
 
-        public async Task<Portfolio> GetFromNameAsync(string name, int userId)
+        public async Task<Portfolio> GetDefaultPortfolioAsync(int userId)
         {
-            var portfolio = await _context.Portfolios.FirstOrDefaultAsync(x => x.Name == name && x.UserId == userId);
+            var portfolio = await _context.Portfolios.FirstOrDefaultAsync(x => x.Name == "default" && x.UserId == userId);
 
             return portfolio;
+        }
+
+        public async Task<List<Portfolio>> GetAllPortfolioByUserIdAsync(int userId)
+        {
+            var portfolios = await _context.Portfolios.Where(x => x.UserId == userId).ToListAsync();
+            return portfolios;
         }
     }
 }

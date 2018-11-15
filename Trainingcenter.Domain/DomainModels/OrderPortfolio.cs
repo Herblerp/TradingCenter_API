@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Trainingcenter.Domain.DomainModels
 {
-    public class OrderPortfolio
+    public class PortfolioOrder
     {
         public int OrderId { get; set; }
         public Order Order { get; set; }

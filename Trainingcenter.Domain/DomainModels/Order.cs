@@ -28,7 +28,7 @@ namespace Trainingcenter.Domain.DomainModels
 
         public User User { get; set; }
 
-        public ICollection<OrderPortfolio> OrderPortfolios { get; set; }
+        public ICollection<PortfolioOrder> OrderPortfolios { get; set; }
         public ICollection<Comment> Comments { get; set; }
     }
 }
