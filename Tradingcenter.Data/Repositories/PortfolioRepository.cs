@@ -35,21 +35,21 @@ namespace Tradingcenter.Data.Repositories
             return portfolio;
         }
 
-        public async Task<bool> IsOrderInPortfolio(int orderId, int portfolioId)
-        {
-            var op = await _context.OrderPortolios.FirstOrDefaultAsync(x => x.OrderId == orderId && x.PortfolioId == portfolioId);
-
-            if(op == null)
-            {
-                return false;
-            }
-            return true;
-        }
-
         public async Task<List<Portfolio>> GetAllPortfolioByUserIdAsync(int userId)
         {
             var portfolios = await _context.Portfolios.Where(x => x.UserId == userId).ToListAsync();
             return portfolios;
+        }
+
+        public async Task<bool> PortfolioOrderExists(int orderId, int portfolioId)
+        {
+            var op = await _context.OrderPortolios.FirstOrDefaultAsync(x => x.OrderId == orderId && x.PortfolioId == portfolioId);
+
+            if (op == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

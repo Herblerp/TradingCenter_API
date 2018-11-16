@@ -90,9 +90,9 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             return await _genericRepo.AddAsync(portfolioOrder);
         }
 
-        public async Task<bool> IsOrderInPortfolio(int orderId, int portfolioId)
+        public async Task<bool> PortfolioOrderExists(int orderId, int portfolioId)
         {
-            return (await _portfolioRepo.IsOrderInPortfolio(orderId, portfolioId));
+            return (await _portfolioRepo.PortfolioOrderExists(orderId, portfolioId));
         }
 
         #endregion
