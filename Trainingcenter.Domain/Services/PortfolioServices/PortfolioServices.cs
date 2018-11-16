@@ -111,6 +111,5 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
         }
 
         #endregion
-
     }
 }

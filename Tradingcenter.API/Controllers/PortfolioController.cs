@@ -46,7 +46,7 @@ namespace Tradingcenter.API.Controllers
             }
             catch
             {
-                return StatusCode(500, "Something went wrong while attempting to get portfolios")
+                return StatusCode(500, "Something went wrong while attempting to get portfolios");
             }
         }
 
