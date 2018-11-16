@@ -114,7 +114,7 @@ namespace Tradingcenter.API.Controllers
 
                 var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioToUpdate.PortfolioId);
 
-                if (portfolio.UserId == userId)
+                if (portfolio.UserId == userId && portfolio.Name != "default")
                 {
                     await _portfolioServices.UpdatePortfolioAsync(portfolioToUpdate);
                     return StatusCode(200);
@@ -136,7 +136,7 @@ namespace Tradingcenter.API.Controllers
 
                 var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
 
-                if (portfolio.UserId == userId)
+                if (portfolio.UserId == userId && portfolio.Name != "default")
                 {
                     await _portfolioServices.DeletePortfolioAsync(portfolioId);
                     return StatusCode(200);

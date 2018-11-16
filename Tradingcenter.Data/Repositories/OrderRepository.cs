@@ -32,7 +32,7 @@ namespace Tradingcenter.Data.Repositories
         {
             foreach(var order in orders)
             {
-                var orderFromDB = await _context.Orders.FirstOrDefaultAsync(x => x.ExchangeOrderId == order.ExchangeOrderId && x.Exchange == order.Exchange);
+                var orderFromDB = await _context.Orders.FirstOrDefaultAsync(x => x.UserId == order.UserId&&x.ExchangeOrderId == order.ExchangeOrderId && x.Exchange == order.Exchange);
                 if(orderFromDB == null)
                 {
                     await _context.Orders.AddAsync(order);
