@@ -263,7 +263,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
             foreach (Order order in orderList)
             {
                 double profit = 0;
-                if (order.Side.Equals("Buy"))
+                if (order.Side.Equals("Sell"))
                 {
                     profit = order.Price;
                 }
@@ -317,7 +317,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
                 foreach (Order order in portfolio.Orders)
                 {
                     double profit = 0;
-                    if (order.Side.Equals("Buy"))
+                    if (order.Side.Equals("Sell"))
                     {
                         profit = order.Price;
                     }
