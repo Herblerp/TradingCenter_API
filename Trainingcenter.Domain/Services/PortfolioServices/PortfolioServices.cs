@@ -91,6 +91,12 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             return await _genericRepo.AddAsync(portfolioOrder);
         }
 
+        public async Task<PortfolioOrder> RemoveOrderById(int orderId, int portfolioId)
+        {
+            PortfolioOrder poToDelete = await _portfolioRepo.GetPortfolioOrder(orderId, portfolioId);
+            return await _genericRepo.DeleteAsync(poToDelete);
+        }
+
         public async Task<bool> PortfolioOrderExists(int orderId, int portfolioId)
         {
             return (await _portfolioRepo.PortfolioOrderExists(orderId, portfolioId));

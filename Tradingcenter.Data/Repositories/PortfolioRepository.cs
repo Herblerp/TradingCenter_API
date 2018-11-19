@@ -51,5 +51,11 @@ namespace Tradingcenter.Data.Repositories
             }
             return true;
         }
+
+        public async Task<PortfolioOrder> GetPortfolioOrder(int orderId, int portfolioId)
+        {
+            PortfolioOrder po = await _context.OrderPortolios.FirstOrDefaultAsync(x => x.OrderId == orderId && x.PortfolioId == portfolioId);
+            return po;
+        }
     }
 }

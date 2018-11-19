@@ -16,6 +16,7 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
         Task<PortfolioDTO> UpdatePortfolioAsync(PortfolioDTO portfolioToUpdate);
         Task<bool> DeletePortfolioAsync(int portfolioId);
         Task<PortfolioOrder> AddOrderById(PortfolioOrderDTO po);
+        Task<PortfolioOrder> RemoveOrderById(int orderId, int portfolioId);
         Task<bool> PortfolioOrderExists(int orderId, int portfolioId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Trainingcenter.Domain.DomainModels;
 
 namespace Tradingcenter.Data
@@ -31,6 +32,5 @@ namespace Tradingcenter.Data
                 .WithMany(p => p.PortfolioOrders)
                 .HasForeignKey(op => op.PortfolioId);
         }
-
     }
 }

@@ -92,17 +92,44 @@ namespace Tradingcenter.API.Controllers
                 {
                     return StatusCode(401);
                 }
-                if (!await _portfolioServices.PortfolioOrderExists(po.OrderId, po.PortfolioId))
+                if (await _portfolioServices.PortfolioOrderExists(po.OrderId, po.PortfolioId))
                 {
-                    await _portfolioServices.AddOrderById(po);
-                    return StatusCode(201);
+                    return StatusCode(400, "Portfolio with id " + po.PortfolioId + " already contains order with id " + po.OrderId);
                 }
-                return StatusCode(400);
+                await _portfolioServices.AddOrderById(po);
+                return StatusCode(201);
             }
             catch
             {
                 return StatusCode(500, "Something went wrong while attempting to add order with id " + po.OrderId + " to portfolio with id " + po.PortfolioId);
             }
+        }
+
+        [HttpDelete("order")]
+        public async Task<IActionResult> DeleteOrder(int orderId, int portfolioId)
+        {
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var order = await _orderServices.GetOrderById(orderId);
+            var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
+
+            if(order == null)
+            {
+                return StatusCode(400, "Order with id " + orderId + " was not found.");
+            }
+            if (portfolio == null)
+            {
+                return StatusCode(400, "Portfolio with id " + portfolioId + " was not found.");
+            }
+            if (order.UserId != userId || portfolio.UserId != userId)
+            {
+                return StatusCode(401);
+            }
+            if (!await _portfolioServices.PortfolioOrderExists(orderId, portfolioId))
+            {
+                return StatusCode(400, "Portfolio with Id " + portfolioId + " does not contain order with id " + orderId);
+            }
+            await _portfolioServices.RemoveOrderById(orderId, portfolioId);
+            return StatusCode(200);
         }
 
         [HttpPost]

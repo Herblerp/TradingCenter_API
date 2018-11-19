@@ -13,5 +13,6 @@ namespace Trainingcenter.Domain.Repositories
         Task<List<Portfolio>> GetAllPortfolioByUserIdAsync(int userId);
 
         Task<bool> PortfolioOrderExists(int orderId, int portfolioId);
+        Task<PortfolioOrder> GetPortfolioOrder(int orderId, int portfolioId);
     }
 }
