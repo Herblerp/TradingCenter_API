@@ -11,6 +11,6 @@ namespace Trainingcenter.Domain.Repositories
     {
         Task<T> AddAsync<T>(T entity) where T : class;
         Task<T> UpdateAsync<T>(T entity) where T : class;
-        Task DeleteAsync<T>(T entity) where T : class;
+        Task<T> DeleteAsync<T>(T entity) where T : class;
     }
 }

@@ -6,7 +6,7 @@ using Trainingcenter.Domain.DomainModels;
 
 namespace Trainingcenter.Domain.Repositories
 {
-    interface INoteRepository
+    public interface INoteRepository
     {
         Task<Note> GetFromIdAsync(int noteId);
 

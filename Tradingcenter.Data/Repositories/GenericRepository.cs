@@ -31,10 +31,12 @@ namespace Tradingcenter.Data.Repositories
             return entity;
         }
 
-        public async Task DeleteAsync<T>(T entity) where T : class
+        public async Task<T> DeleteAsync<T>(T entity) where T : class
         {
             _context.Remove(entity);
             await _context.SaveChangesAsync();
+
+            return entity;
         }
     }
 }
