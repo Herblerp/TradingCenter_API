@@ -14,5 +14,6 @@ namespace Trainingcenter.Domain.DTOs.PortfolioDTO_s
         public string Description { get; set; }
         [MaxLength(500, ErrorMessage = "Description must be shorter than 500 characters")]
         public string Goal { get; set; }
+        public bool IsDefault { get; set; }
     }
 }

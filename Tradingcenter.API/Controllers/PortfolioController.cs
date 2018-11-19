@@ -56,7 +56,7 @@ namespace Tradingcenter.API.Controllers
             try
             {
                 int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                await _portfolioServices.CreatePortfolioAsync(portfolio, userId);
+                await _portfolioServices.CreatePortfolioAsync(portfolio, userId, false);
 
                 return StatusCode(201);
             }
@@ -114,7 +114,7 @@ namespace Tradingcenter.API.Controllers
 
                 var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioToUpdate.PortfolioId);
 
-                if (portfolio.UserId == userId && portfolio.Name != "default")
+                if (portfolio.UserId == userId)
                 {
                     await _portfolioServices.UpdatePortfolioAsync(portfolioToUpdate);
                     return StatusCode(200);
@@ -136,7 +136,7 @@ namespace Tradingcenter.API.Controllers
 
                 var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
 
-                if (portfolio.UserId == userId && portfolio.Name != "default")
+                if (portfolio.UserId == userId && portfolio.IsDefault == false)
                 {
                     await _portfolioServices.DeletePortfolioAsync(portfolioId);
                     return StatusCode(200);

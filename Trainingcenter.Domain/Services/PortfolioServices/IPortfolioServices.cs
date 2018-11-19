@@ -12,7 +12,7 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
     {
         Task<Portfolio> GetPortfolioByIdAsync(int portfolioId);
         Task<List<PortfolioDTO>> GetAllPortfolioByUserIdAsync(int userId);
-        Task<PortfolioDTO> CreatePortfolioAsync(PortfolioToCreateDTO portfolioToCreate, int userId);
+        Task<PortfolioDTO> CreatePortfolioAsync(PortfolioToCreateDTO portfolioToCreate, int userId, bool isDefault);
         Task<PortfolioDTO> UpdatePortfolioAsync(PortfolioDTO portfolioToUpdate);
         Task<bool> DeletePortfolioAsync(int portfolioId);
         Task<PortfolioOrder> AddOrderById(PortfolioOrderDTO po);

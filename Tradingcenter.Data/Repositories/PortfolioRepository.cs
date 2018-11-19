@@ -30,7 +30,7 @@ namespace Tradingcenter.Data.Repositories
 
         public async Task<Portfolio> GetDefaultPortfolioAsync(int userId)
         {
-            var portfolio = await _context.Portfolios.FirstOrDefaultAsync(x => x.Name == "default" && x.UserId == userId);
+            var portfolio = await _context.Portfolios.FirstOrDefaultAsync(x => x.UserId == userId && x.IsDefault == true);
 
             return portfolio;
         }

@@ -42,14 +42,15 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             return portfolioDTOList;
         }
 
-        public async Task<PortfolioDTO> CreatePortfolioAsync(PortfolioToCreateDTO portfolioToCreate, int userId)
+        public async Task<PortfolioDTO> CreatePortfolioAsync(PortfolioToCreateDTO portfolioToCreate, int userId, bool isDefault)
         {
             var portfolio = new Portfolio
             {
                 UserId = userId,
                 Name = portfolioToCreate.Name,
                 Description = portfolioToCreate.Description,
-                Goal = portfolioToCreate.Goal
+                Goal = portfolioToCreate.Goal,
+                IsDefault = isDefault
             };
             return ConvertPortfolio(await _genericRepo.AddAsync(portfolio));
         }

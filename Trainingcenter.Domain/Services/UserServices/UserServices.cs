@@ -87,9 +87,9 @@ namespace Trainingcenter.Domain.Services.UserServices
                 //Create default portfolio
                 var defaultPortfolio = new PortfolioToCreateDTO
                 {
-                    Name = "default"
+                    Name = "default",
                 };
-                await _portfolioService.CreatePortfolioAsync(defaultPortfolio, createdUser.UserId);
+                await _portfolioService.CreatePortfolioAsync(defaultPortfolio, createdUser.UserId, true);
 
                 var userToReturn = new UserDTO
                 {
