@@ -92,5 +92,20 @@ namespace Tradingcenter.API.Controllers
                 return StatusCode(500, "Something went wrong while attempting to register, please try again in a few moments.");
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> Post(UserToUpdateDTO userToUpdate)
+        {
+            if (userToUpdate.Email != null && !_userService.IsValidEmail(userToUpdate.Email))
+            {
+                return StatusCode(400, "Thats not an email address...");
+            }
+
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (await _userService.UpdateUser(userToUpdate, userId) == null)
+            {
+                return StatusCode(500, "kaka");
+            }
+            return StatusCode(200);
+        }
     }
 }

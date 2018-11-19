@@ -11,6 +11,7 @@ namespace Trainingcenter.Domain.Services
         Task<UserDTO> Register(UserToRegisterDTO userToRegister);
         Task<UserDTO> Login(UserToLoginDTO userToLogin);
         Task<bool> UserExists(string username);
+        Task<UserDTO> UpdateUser(UserToUpdateDTO userToUpdate, int userId);
         bool IsValidEmail(string email);
     }
 }

@@ -50,7 +50,7 @@ namespace Trainingcenter.Domain.Services.UserServices
 
                 return ConvertUser(userFromDB);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("UserService failed to login server");
             }
@@ -104,6 +104,31 @@ namespace Trainingcenter.Domain.Services.UserServices
             {
                 throw new Exception("UserService failed to register user");
             }
+        }
+
+        public async Task<UserDTO> UpdateUser(UserToUpdateDTO userToUpdate, int userId)
+        {
+            User user = await _userRepo.GetFromIdAsync(userId);
+            
+            if(user == null)
+            {
+                return null;
+            }
+
+            //Add check for empty strings
+            if(userToUpdate.FirstName != null)
+                user.FirstName = userToUpdate.FirstName;
+
+            if (userToUpdate.LastName != null)
+                user.LastName = userToUpdate.LastName;
+
+            if (userToUpdate.Phone != null)
+                user.Phone = userToUpdate.Phone;
+
+            if (userToUpdate.Email != null && IsValidEmail(userToUpdate.Email))
+                user.Email = userToUpdate.Email;
+
+            return ConvertUser(await _genericRepo.UpdateAsync(user));
         }
 
         public async Task<bool> UserExists(string username)
