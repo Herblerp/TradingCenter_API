@@ -22,12 +22,13 @@ namespace Trainingcenter.Domain.Services.OrderServices
         private readonly IGenericRepository _genericRepo;
         private readonly IUserRepository _userRepo;
 
-        public OrderServices(IOrderRepository orderRepo, IExchangeKeyRepository keyRepo, IGenericRepository genericRepo, IPortfolioRepository portfolioRepo)
+        public OrderServices(IOrderRepository orderRepo, IExchangeKeyRepository keyRepo, IGenericRepository genericRepo, IPortfolioRepository portfolioRepo, IUserRepository userRepo)
         {
             _orderRepo = orderRepo;
             _keyRepo = keyRepo;
             _portfolioRepo = portfolioRepo;
             _genericRepo = genericRepo;
+            _userRepo = userRepo;
     }
 
         #endregion
@@ -266,7 +267,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
             }
             if (portfolioId != 0)
             {
-                var portfolio = await _portfolioRepo.GetFromIdAsync(portfolioId);
+                var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
                 if (portfolio == null || portfolio.UserId != userId)
                 {
                     return null;
@@ -293,19 +294,18 @@ namespace Trainingcenter.Domain.Services.OrderServices
                 bool dayAlreadyInList = false;
 
                 foreach (ProfitPerDayDTO profitPerDay in ProfitPerDayDTOList)
-                { 
-                    if (order.Timestamp.Date.Equals(profitPerDay.Day.Date))
+                {
+                    if (order.Timestamp.ToString("dd/MM/yyyy") == profitPerDay.Day)
                     {
                         profitPerDay.Profit = profitPerDay.Profit + profit;
                         dayAlreadyInList = true;
                     }
                 }
 
-
                 if (!dayAlreadyInList)
                 {
 
-                    ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.Date });
+                    ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.ToString("dd/MM/yyyy") });
                 }
             }
 
@@ -325,16 +325,20 @@ namespace Trainingcenter.Domain.Services.OrderServices
                     return null;
                 }
             }
-           
-            User user = await _userRepo.GetFromIdAsync(userId);
 
+
+            var portfolioList = await _portfolioRepo.GetAllPortfolioByUserIdAsync(userId);
             var ProfitPerDayDTOList = new List<ProfitPerDayDTO>();
 
-            foreach (Portfolio portfolio in user.Portfolios)
+            foreach (Portfolio portfolio in portfolioList)
             {
-                foreach (Order order in portfolio.Orders)
+                List<Order> orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolio.PortfolioId);
+                orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
+
+                foreach (Order order in orderList)
                 {
                     double profit = 0;
+
                     if (order.Side.Equals("Sell"))
                     {
                         profit = order.Price;
@@ -348,18 +352,17 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
                     foreach (ProfitPerDayDTO profitPerDay in ProfitPerDayDTOList)
                     {
-                        if (order.Timestamp.Date.Equals(profitPerDay.Day.Date))
+                        if (order.Timestamp.ToString("dd/MM/yyyy") == profitPerDay.Day)
                         {
                             profitPerDay.Profit = profitPerDay.Profit + profit;
                             dayAlreadyInList = true;
                         }
                     }
 
-
                     if (!dayAlreadyInList)
                     {
 
-                        ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.Date });
+                        ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.ToString("dd/MM/yyyy") });
                     }
                 }
             }

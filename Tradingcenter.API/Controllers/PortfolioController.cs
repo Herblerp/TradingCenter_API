@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Trainingcenter.Domain.DTOs.OrderDTO_s;
 using Trainingcenter.Domain.DTOs.PortfolioDTO_s;
 using Trainingcenter.Domain.DTOs.PortfolioOrderDTOs;
 using Trainingcenter.Domain.Services.OrderServices;
@@ -47,6 +48,38 @@ namespace Tradingcenter.API.Controllers
             catch
             {
                 return StatusCode(500, "Something went wrong while attempting to get portfolios");
+            }
+        }
+
+        [HttpGet("profit")]
+        public async Task<IActionResult> GetProfit(int portfolioId)
+        {
+            try
+            {
+                int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var ppdList = new List<ProfitPerDayDTO>();
+
+                if (portfolioId == 0)
+                {
+                    ppdList = await _orderServices.GetProfitPerDayFromUser(userId);
+
+                    if (ppdList != null)
+                    {
+                        return StatusCode(200, ppdList);
+                    }
+                    return StatusCode(400);
+                }
+                ppdList = await _orderServices.GetProfitPerDayFromPortfolio(userId, portfolioId);
+
+                if (ppdList != null)
+                {
+                    return StatusCode(200, ppdList);
+                }
+                return StatusCode(400);
+            }
+            catch
+            {
+                return StatusCode(500, "Something went wrong while attempting to get profit per day.");
             }
         }
 
