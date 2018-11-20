@@ -175,6 +175,10 @@ namespace Tradingcenter.API.Controllers
             {
                 return StatusCode(400, "Portfolio with Id " + portfolioId + " does not contain order with id " + orderId);
             }
+            if (portfolio.IsDefault)
+            {
+                return StatusCode(401, "You can not delete orders from the default portfolio.");
+            }
             await _portfolioServices.RemoveOrderById(orderId, portfolioId);
             return StatusCode(200);
         }

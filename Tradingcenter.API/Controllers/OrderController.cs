@@ -51,7 +51,11 @@ namespace Tradingcenter.API.Controllers
         public async Task<IActionResult> RefreshOrders()
         {
             int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            await _orderServices.RefreshAllOrders(userId);
+            var orderlist = await _orderServices.RefreshAllOrders(userId);
+            if(orderlist.Count == 0)
+            {
+                return StatusCode(200, "No new orders were found. Make sure your keys are valid.");
+            }
             return StatusCode(200);
         }
     }

@@ -50,6 +50,12 @@ namespace Tradingcenter.API.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(CommentToCreateDTO comment)
         {
+            var portfolio = await _portfolioServices.GetPortfolioByIdAsync(comment.PortfolioId);
+
+            if(portfolio == null)
+            {
+                return StatusCode(400, "Portfolio with id " + comment.PortfolioId + " was not found.");
+            }
             comment.UserId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var createdComment = await _commentServices.CreateComment(comment);
             return StatusCode(200);
