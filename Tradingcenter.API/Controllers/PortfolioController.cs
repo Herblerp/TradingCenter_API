@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Trainingcenter.Domain.DTOs.OrderDTO_s;
 using Trainingcenter.Domain.DTOs.PortfolioDTO_s;
 using Trainingcenter.Domain.DTOs.PortfolioOrderDTOs;
+using Trainingcenter.Domain.Services.CommentServices;
 using Trainingcenter.Domain.Services.OrderServices;
 using Trainingcenter.Domain.Services.PortfolioServices;
 
@@ -17,13 +18,15 @@ namespace Tradingcenter.API.Controllers
     [ApiController]
     public class PortfolioController : ControllerBase
     {
+        private readonly ICommentServices _commentServices;
         private readonly IPortfolioServices _portfolioServices;
         private readonly IOrderServices _orderServices;
 
-        public PortfolioController(IPortfolioServices portfolioServices, IOrderServices orderServices)
+        public PortfolioController(IPortfolioServices portfolioServices, IOrderServices orderServices, ICommentServices commentServices)
         {
             _portfolioServices = portfolioServices;
             _orderServices = orderServices;
+            _commentServices = commentServices;
         }
 
         [HttpGet]
@@ -81,6 +84,17 @@ namespace Tradingcenter.API.Controllers
             {
                 return StatusCode(500, "Something went wrong while attempting to get profit per day.");
             }
+        }
+
+        [HttpGet("Comment")]
+        public async Task<IActionResult> GetComments(int portfolioId)
+        {
+            if(await _portfolioServices.GetPortfolioByIdAsync(portfolioId) == null)
+            {
+                return StatusCode(400, "Portfolio with id " + portfolioId + " was not found.");
+            }
+            var comments = await _commentServices.GetAllCommentByPortfolioId(portfolioId);
+            return StatusCode(200, comments);
         }
 
         [HttpPut]

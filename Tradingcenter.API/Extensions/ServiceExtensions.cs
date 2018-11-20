@@ -13,6 +13,7 @@ using Tradingcenter.Data;
 using Tradingcenter.Data.Repositories;
 using Trainingcenter.Domain.Repositories;
 using Trainingcenter.Domain.Services;
+using Trainingcenter.Domain.Services.CommentServices;
 using Trainingcenter.Domain.Services.ExchangeKeyServices;
 using Trainingcenter.Domain.Services.NoteServices;
 using Trainingcenter.Domain.Services.OrderServices;
@@ -49,6 +50,8 @@ namespace Tradingcenter.API.Extensions
             services.AddScoped<IExchangeKeyServices, ExchangeKeyServices>();
             services.AddScoped<INoteRepository, NoteRepository>();
             services.AddScoped<INoteServices, NoteServices>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
+            services.AddScoped<ICommentServices, CommentServices>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
