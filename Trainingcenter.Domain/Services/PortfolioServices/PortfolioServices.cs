@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.DTOs.PortfolioDTO_s;
+using Trainingcenter.Domain.DTOs.PortfolioOrderDTOs;
 using Trainingcenter.Domain.Repositories;
 
 namespace Trainingcenter.Domain.Services.PortfolioServices
@@ -23,75 +25,92 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
 
         #region Services
 
-        public async Task<PortfolioDTO> CreatePortfolio(PortfolioToCreateDTO portfolioToCreate, int userId)
+        public async Task<Portfolio> GetPortfolioByIdAsync(int portfolioId)
+        {
+            return await _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
+        }
+
+        public async Task<List<PortfolioDTO>> GetAllPortfolioByUserIdAsync(int userId)
+        {
+            var portfolioList = await _portfolioRepo.GetAllPortfolioByUserIdAsync(userId);
+            var portfolioDTOList = new List<PortfolioDTO>();
+
+            foreach(Portfolio portfolio in portfolioList)
+            {
+                portfolioDTOList.Add(ConvertPortfolio(portfolio));
+            }
+            return portfolioDTOList;
+        }
+
+        public async Task<PortfolioDTO> CreatePortfolioAsync(PortfolioToCreateDTO portfolioToCreate, int userId, bool isDefault)
         {
             var portfolio = new Portfolio
             {
                 UserId = userId,
                 Name = portfolioToCreate.Name,
                 Description = portfolioToCreate.Description,
-                Goal = portfolioToCreate.Goal
+                Goal = portfolioToCreate.Goal,
+                IsDefault = isDefault
             };
-
-            await _genericRepo.AddAsync(portfolio);
-            return Convert(portfolioToCreate);
+            return ConvertPortfolio(await _genericRepo.AddAsync(portfolio));
         }
 
-        public async Task<PortfolioDTO> CreateDefaultPortfolio(int userId)
+        public async Task<PortfolioDTO> UpdatePortfolioAsync(PortfolioDTO portfolioToUpdate)
         {
-            var portfolio = new Portfolio
-            {
-                UserId = userId,
-                Name = "default"
-            };
-
-            await _genericRepo.AddAsync(portfolio);
-
-            return Convert(portfolio);
-        }
-
-        public async Task<PortfolioDTO> UpdatePortfolio(PortfolioToUpdateDTO portfolioToUpdate, int userId)
-        {
-            var portfolio = await _portfolioRepo.GetFromNameAsync(portfolioToUpdate.Name, userId);
+            var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioToUpdate.PortfolioId);
 
             portfolio.Name = portfolioToUpdate.Name;
             portfolio.Description = portfolioToUpdate.Description;
             portfolio.Goal = portfolioToUpdate.Goal;
 
-            await _genericRepo.UpdateAsync(portfolio);
-
-            return Convert(portfolio);
+            return ConvertPortfolio(await _genericRepo.UpdateAsync(portfolio));
         }
 
-        public async Task<bool> PortfolioExists(string name, int userId)
+        public async Task<bool> DeletePortfolioAsync(int portfolioId)
         {
-            var portfolio = await _portfolioRepo.GetFromNameAsync(name, userId);
-            if (portfolio == null)
+            var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
+
+            try
+            {
+                await _genericRepo.DeleteAsync(portfolio);
+                return true;
+            }
+            catch
             {
                 return false;
             }
-            return true;
         }
 
-        public async Task<int> GetPortfolioId(string name, int userId)
+        public async Task<PortfolioOrder> AddOrderById(PortfolioOrderDTO po)
         {
-            var portfolio = await _portfolioRepo.GetFromNameAsync(name, userId);
-
-            return portfolio.PortfolioId;
+            var portfolioOrder = new PortfolioOrder
+            {
+                OrderId = po.OrderId,
+                PortfolioId = po.PortfolioId
+            };
+            return await _genericRepo.AddAsync(portfolioOrder);
         }
 
-        #endregion
+        public async Task<PortfolioOrder> RemoveOrderById(int orderId, int portfolioId)
+        {
+            PortfolioOrder poToDelete = await _portfolioRepo.GetPortfolioOrder(orderId, portfolioId);
+            return await _genericRepo.DeleteAsync(poToDelete);
+        }
 
-        #region Helpers
+        public async Task<bool> PortfolioOrderExists(int orderId, int portfolioId)
+        {
+            return (await _portfolioRepo.PortfolioOrderExists(orderId, portfolioId));
+        }
 
         #endregion
 
         #region Converters
 
-        private PortfolioDTO Convert(Portfolio portfolio)
+        private PortfolioDTO ConvertPortfolio(Portfolio portfolio)
         {
             var portfolioDTO = new PortfolioDTO
             {
+                PortfolioId = portfolio.PortfolioId,
                 Name = portfolio.Name,
                 Description = portfolio.Description,
                 Goal = portfolio.Goal
@@ -99,20 +118,6 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             return portfolioDTO;
         }
 
-        private PortfolioDTO Convert(PortfolioToCreateDTO portfolioToCreate)
-        {
-            var portfolio = new PortfolioDTO
-            {
-                Name = portfolioToCreate.Name,
-                Description = portfolioToCreate.Description,
-                Goal = portfolioToCreate.Goal
-            };
-            return portfolio;
-        }
-
         #endregion
-
-
-
     }
 }

@@ -37,7 +37,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
         //Get all orders from all exchanges from a given user
         public async Task<List<Order>> GetAllOrders(int userId)
         {
-            var portfolio = await _portfolioRepo.GetFromNameAsync("default", userId);
+            var portfolio = await _portfolioRepo.GetDefaultPortfolioAsync(userId);
             int portfolioId = portfolio.PortfolioId;
 
             var orderList = new List<Order>();
@@ -53,7 +53,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
         public async Task<List<Order>> RefreshAllOrders(int userId)
         {
             //Get the default portfolio
-            var portfolio = await _portfolioRepo.GetFromNameAsync("default", userId);
+            var portfolio = await _portfolioRepo.GetDefaultPortfolioAsync(userId);
             int portfolioId = portfolio.PortfolioId;
 
             //Get the current time
@@ -77,10 +77,23 @@ namespace Trainingcenter.Domain.Services.OrderServices
             {
                 orderList.AddRange(await GetBinanceOrdersFromUserId(userId, portfolioId, key.LastId));
             }
+            foreach (Order order in orderList)
+            {
+
+            }
 
             //Save the orders
             var savedOrders = await _orderRepo.SaveOrdersAsync(orderList);
 
+            foreach(Order order in savedOrders)
+            {
+                var orderPortfolio = new PortfolioOrder
+                {
+                    PortfolioId = portfolioId,
+                    OrderId = order.OrderId
+                };
+                await _genericRepo.AddAsync(orderPortfolio);
+            }
             return savedOrders;
         }
 
@@ -111,7 +124,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
                 foreach (var BitMEXOrder in BitMEXOrderList)
                 {
-                    Order order = ConvertBitMEXOrder(BitMEXOrder, userId, portfolioId);
+                    Order order = ConvertBitMEXOrder(BitMEXOrder, userId);
                     orderList.Add(order);
                 }
             }
@@ -137,7 +150,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
                     var BitMEXOrderList = JsonConvert.DeserializeObject<List<BitMEXOrder>>(temp);
                     foreach (var BitMEXOrder in BitMEXOrderList)
                     {
-                        Order order = ConvertBitMEXOrder(BitMEXOrder, userId, portfolioId);
+                        Order order = ConvertBitMEXOrder(BitMEXOrder, userId);
                         orderList.Add(order);
                     }
                 }
@@ -152,6 +165,11 @@ namespace Trainingcenter.Domain.Services.OrderServices
         #endregion
 
         #region Services
+
+        public async Task<Order> GetOrderById(int orderId)
+        {
+            return await _orderRepo.GetOrderById(orderId);
+        }
 
         public async Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, string dateFrom, string dateTo)
         {
@@ -169,7 +187,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             if (portfolioId != 0)
             {
-                var portfolio = await _portfolioRepo.GetFromIdAsync(portfolioId);
+                var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
                 if (portfolio == null || portfolio.UserId != userId)
                 {
                     return null;
@@ -348,14 +366,12 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             return ProfitPerDayDTOList;
         }
-
-
-
+        
         #endregion
 
         #region Converters
 
-        private Order ConvertBitMEXOrder(BitMEXOrder bitMEXOrder, int userId, int portfolioId)
+        private Order ConvertBitMEXOrder(BitMEXOrder bitMEXOrder, int userId)
         {
 
             //TODO: Add checks for double values
@@ -363,7 +379,6 @@ namespace Trainingcenter.Domain.Services.OrderServices
             var order = new Order
             {
                 UserId = userId,
-                PortfolioId = portfolioId,
                 Exchange = "BitMEX",
                 ExchangeOrderId = bitMEXOrder.orderID,
                 Symbol = bitMEXOrder.symbol.Substring(0, 3),
@@ -383,7 +398,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             var orderDTO = new OrderDTO
             {
-                PortfolioId = order.PortfolioId,
+                OrderId = order.OrderId,
                 Exchange = order.Exchange,
                 ExchangeOrderId = order.ExchangeOrderId,
                 Symbol = order.Symbol,

@@ -15,6 +15,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
         Task<List<ProfitPerDayDTO>> GetProfitPerDayFromUser(int userId);
 
         //Exchange methods
+        Task<Order> GetOrderById(int orderId);
         Task<List<Order>> GetAllOrders(int userId);
         Task<List<Order>> RefreshAllOrders(int userId);
         Task<List<Order>> GetBitMEXOrdersFromUserId(int userId, int portfolioId);

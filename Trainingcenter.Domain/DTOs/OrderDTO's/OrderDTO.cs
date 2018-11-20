@@ -6,7 +6,7 @@ namespace Trainingcenter.Domain.DTOs.OrderDTO_s
 {
     public class OrderDTO
     {
-        public int PortfolioId { get; set; }
+        public int OrderId { get; set; }
         public string Exchange { get; set; }
         public string ExchangeOrderId { get; set; }
         public string Symbol { get; set; }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tradingcenter.Data;
 
 namespace Tradingcenter.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20181115104132_updateOrder")]
+    partial class updateOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,6 +96,8 @@ namespace Tradingcenter.Data.Migrations
 
                     b.Property<double>("OrderQty");
 
+                    b.Property<int?>("PortfolioId");
+
                     b.Property<double>("Price");
 
                     b.Property<string>("Side")
@@ -108,9 +112,24 @@ namespace Tradingcenter.Data.Migrations
 
                     b.HasKey("OrderId");
 
+                    b.HasIndex("PortfolioId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.OrderPortfolio", b =>
+                {
+                    b.Property<int>("OrderId");
+
+                    b.Property<int>("PortfolioId");
+
+                    b.HasKey("OrderId", "PortfolioId");
+
+                    b.HasIndex("PortfolioId");
+
+                    b.ToTable("OrderPortolios");
                 });
 
             modelBuilder.Entity("Trainingcenter.Domain.DomainModels.Picture", b =>
@@ -140,8 +159,6 @@ namespace Tradingcenter.Data.Migrations
 
                     b.Property<string>("Goal");
 
-                    b.Property<bool>("IsDefault");
-
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -152,19 +169,6 @@ namespace Tradingcenter.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Portfolios");
-                });
-
-            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.PortfolioOrder", b =>
-                {
-                    b.Property<int>("OrderId");
-
-                    b.Property<int>("PortfolioId");
-
-                    b.HasKey("OrderId", "PortfolioId");
-
-                    b.HasIndex("PortfolioId");
-
-                    b.ToTable("OrderPortolios");
                 });
 
             modelBuilder.Entity("Trainingcenter.Domain.DomainModels.User", b =>
@@ -225,9 +229,26 @@ namespace Tradingcenter.Data.Migrations
 
             modelBuilder.Entity("Trainingcenter.Domain.DomainModels.Order", b =>
                 {
+                    b.HasOne("Trainingcenter.Domain.DomainModels.Portfolio", "Portfolio")
+                        .WithMany()
+                        .HasForeignKey("PortfolioId");
+
                     b.HasOne("Trainingcenter.Domain.DomainModels.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.OrderPortfolio", b =>
+                {
+                    b.HasOne("Trainingcenter.Domain.DomainModels.Order", "Order")
+                        .WithMany("OrderPortfolios")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Trainingcenter.Domain.DomainModels.Portfolio", "Portfolio")
+                        .WithMany("PortfolioOrders")
+                        .HasForeignKey("PortfolioId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -244,19 +265,6 @@ namespace Tradingcenter.Data.Migrations
                     b.HasOne("Trainingcenter.Domain.DomainModels.User", "User")
                         .WithMany("Portfolios")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.PortfolioOrder", b =>
-                {
-                    b.HasOne("Trainingcenter.Domain.DomainModels.Order", "Order")
-                        .WithMany("OrderPortfolios")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Trainingcenter.Domain.DomainModels.Portfolio", "Portfolio")
-                        .WithMany("PortfolioOrders")
-                        .HasForeignKey("PortfolioId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

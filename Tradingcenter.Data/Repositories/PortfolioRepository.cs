@@ -11,6 +11,8 @@ namespace Tradingcenter.Data.Repositories
 {
     public class PortfolioRepository : IPortfolioRepository
     {
+        #region DependecyInjection
+
         private readonly DataContext _context;
 
         public PortfolioRepository (DataContext context)
@@ -18,23 +20,42 @@ namespace Tradingcenter.Data.Repositories
             _context = context;
         }
 
-        public async Task<List<Portfolio>> GetAllFromUserIdAsync(int userId)
-        {
-            var portfolios = await _context.Portfolios.Where(x => x.UserId == userId).ToListAsync();
-            return portfolios;
-        }
+        #endregion
 
-        public async Task<Portfolio> GetFromIdAsync(int portfolioId)
+        public async Task<Portfolio> GetPortfolioByIdAsync(int portfolioId)
         {
             var portfolio = await _context.Portfolios.FirstOrDefaultAsync(x => x.PortfolioId == portfolioId);
             return portfolio;
         }
 
-        public async Task<Portfolio> GetFromNameAsync(string name, int userId)
+        public async Task<Portfolio> GetDefaultPortfolioAsync(int userId)
         {
-            var portfolio = await _context.Portfolios.FirstOrDefaultAsync(x => x.Name == name && x.UserId == userId);
+            var portfolio = await _context.Portfolios.FirstOrDefaultAsync(x => x.UserId == userId && x.IsDefault == true);
 
             return portfolio;
+        }
+
+        public async Task<List<Portfolio>> GetAllPortfolioByUserIdAsync(int userId)
+        {
+            var portfolios = await _context.Portfolios.Where(x => x.UserId == userId).ToListAsync();
+            return portfolios;
+        }
+
+        public async Task<bool> PortfolioOrderExists(int orderId, int portfolioId)
+        {
+            var op = await _context.OrderPortolios.FirstOrDefaultAsync(x => x.OrderId == orderId && x.PortfolioId == portfolioId);
+
+            if (op == null)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<PortfolioOrder> GetPortfolioOrder(int orderId, int portfolioId)
+        {
+            PortfolioOrder po = await _context.OrderPortolios.FirstOrDefaultAsync(x => x.OrderId == orderId && x.PortfolioId == portfolioId);
+            return po;
         }
     }
 }
