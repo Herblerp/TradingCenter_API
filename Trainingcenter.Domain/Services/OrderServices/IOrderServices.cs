@@ -11,6 +11,8 @@ namespace Trainingcenter.Domain.Services.OrderServices
     {
         //Service methods
         Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, string dateFrom, string dateTo);
+        Task<List<ProfitPerDayDTO>> GetProfitPerDayFromPortfolio(int userId,int portfolioId);
+        Task<List<ProfitPerDayDTO>> GetProfitPerDayFromUser(int userId);
 
         //Exchange methods
         Task<Order> GetOrderById(int orderId);

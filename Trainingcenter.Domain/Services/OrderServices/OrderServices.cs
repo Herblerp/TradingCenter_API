@@ -20,6 +20,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
         private readonly IExchangeKeyRepository _keyRepo;
         private readonly IPortfolioRepository _portfolioRepo;
         private readonly IGenericRepository _genericRepo;
+        private readonly IUserRepository _userRepo;
 
         public OrderServices(IOrderRepository orderRepo, IExchangeKeyRepository keyRepo, IGenericRepository genericRepo, IPortfolioRepository portfolioRepo)
         {
@@ -252,8 +253,120 @@ namespace Trainingcenter.Domain.Services.OrderServices
             return orderDTOList;
         }
 
+        public async Task<List<ProfitPerDayDTO>> GetProfitPerDayFromPortfolio(int userId, int portfolioId)
+        {
+
+            if (userId != 0)
+            {
+                var user = await _userRepo.GetFromIdAsync(userId);
+                if (user == null || user.UserId != userId)
+                {
+                    return null;
+                }
+            }
+            if (portfolioId != 0)
+            {
+                var portfolio = await _portfolioRepo.GetFromIdAsync(portfolioId);
+                if (portfolio == null || portfolio.UserId != userId)
+                {
+                    return null;
+                }
+            }
+            var orderList = new List<Order>();
+            orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolioId);
+            orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
+
+            var ProfitPerDayDTOList = new List<ProfitPerDayDTO>();
+            
+            foreach (Order order in orderList)
+            {
+                double profit = 0;
+                if (order.Side.Equals("Sell"))
+                {
+                    profit = order.Price;
+                }
+                else
+                {
+                    profit = order.Price * -1;
+                }
+
+                bool dayAlreadyInList = false;
+
+                foreach (ProfitPerDayDTO profitPerDay in ProfitPerDayDTOList)
+                { 
+                    if (order.Timestamp.Date.Equals(profitPerDay.Day.Date))
+                    {
+                        profitPerDay.Profit = profitPerDay.Profit + profit;
+                        dayAlreadyInList = true;
+                    }
+                }
 
 
+                if (!dayAlreadyInList)
+                {
+
+                    ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.Date });
+                }
+            }
+
+
+            return ProfitPerDayDTOList;
+        }
+
+
+
+        public async Task<List<ProfitPerDayDTO>> GetProfitPerDayFromUser(int userId)
+        {
+            if (userId != 0)
+            {
+                var usertest = await _userRepo.GetFromIdAsync(userId);
+                if (usertest == null || usertest.UserId != userId)
+                {
+                    return null;
+                }
+            }
+           
+            User user = await _userRepo.GetFromIdAsync(userId);
+
+            var ProfitPerDayDTOList = new List<ProfitPerDayDTO>();
+
+            foreach (Portfolio portfolio in user.Portfolios)
+            {
+                foreach (Order order in portfolio.Orders)
+                {
+                    double profit = 0;
+                    if (order.Side.Equals("Sell"))
+                    {
+                        profit = order.Price;
+                    }
+                    else
+                    {
+                        profit = order.Price * -1;
+                    }
+
+                    bool dayAlreadyInList = false;
+
+                    foreach (ProfitPerDayDTO profitPerDay in ProfitPerDayDTOList)
+                    {
+                        if (order.Timestamp.Date.Equals(profitPerDay.Day.Date))
+                        {
+                            profitPerDay.Profit = profitPerDay.Profit + profit;
+                            dayAlreadyInList = true;
+                        }
+                    }
+
+
+                    if (!dayAlreadyInList)
+                    {
+
+                        ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.Date });
+                    }
+                }
+            }
+
+            return ProfitPerDayDTOList;
+        }
+        
         #endregion
 
         #region Converters
@@ -297,7 +410,17 @@ namespace Trainingcenter.Domain.Services.OrderServices
             };
             return orderDTO;
         }
-
+        /*
+        private ProfitPerDayDTO ConvertProfitPerDay(double profit, DateTime day)
+        {
+            var profitPerDayDTO = new ProfitPerDayDTO
+            {
+                Profit = profit,
+                Day = day
+            };
+            return profitPerDayDTO;
+        }
+        */
         #endregion
     }
 }
