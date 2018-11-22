@@ -10,7 +10,6 @@ namespace Trainingcenter.Domain.DomainModels
         [Required]
         public string Message { get; set; }
 
-        [Required]
         public Portfolio Portfolio { get; set; }
     }
 }

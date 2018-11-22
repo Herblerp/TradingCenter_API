@@ -6,10 +6,15 @@ using Trainingcenter.Domain.DomainModels;
 
 namespace Trainingcenter.Domain.Repositories
 {
-    interface ICommentRepository
+    public interface ICommentRepository
     {
-        Task<Comment> GetFromIdAsync(int commentId);
+        //Returns the comment with the given Id
+        Task<Comment> GetByIdAsync(int commentId);
 
-        Task<List<Comment>> GetAllFromOrderIdAsync(int orderId);
+        //Returns all the comments from the portfolio with the given portfolioId
+        Task<List<Comment>> GetByPortfolioIdAsync(int portfolioId);
+
+        //Returns all the comments from the user with the given userId
+        Task<List<Comment>> GetByUserIdAsync(int userId);
     }
 }

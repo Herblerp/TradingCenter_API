@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.DTOs.OrderDTO_s;
 using Trainingcenter.Domain.Services.OrderServices;
 using Trainingcenter.Domain.Services.PortfolioServices;
@@ -49,7 +51,11 @@ namespace Tradingcenter.API.Controllers
         public async Task<IActionResult> RefreshOrders()
         {
             int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            await _orderServices.RefreshAllOrders(userId);
+            var orderlist = await _orderServices.RefreshAllOrders(userId);
+            if(orderlist.Count == 0)
+            {
+                return StatusCode(200, "No new orders were found. Make sure your keys are valid.");
+            }
             return StatusCode(200);
         }
     }

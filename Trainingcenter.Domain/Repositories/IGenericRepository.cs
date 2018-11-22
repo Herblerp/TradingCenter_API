@@ -9,8 +9,8 @@ namespace Trainingcenter.Domain.Repositories
 {
     public interface IGenericRepository
     {
-        Task AddAsync<T>(T entity) where T : class;
-        Task UpdateAsync<T>(T entity) where T : class;
-        Task DeleteAsync<T>(T entity) where T : class;
+        Task<T> AddAsync<T>(T entity) where T : class;
+        Task<T> UpdateAsync<T>(T entity) where T : class;
+        Task<T> DeleteAsync<T>(T entity) where T : class;
     }
 }

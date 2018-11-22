@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tradingcenter.Data;
 
 namespace Tradingcenter.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20181119130330_InsertNotes")]
+    partial class InsertNotes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,21 +27,11 @@ namespace Tradingcenter.Data.Migrations
                     b.Property<string>("Message")
                         .IsRequired();
 
-                    b.Property<int?>("OrderId");
-
-                    b.Property<int>("PortfolioId");
-
-                    b.Property<DateTime>("PostedOn");
-
-                    b.Property<int>("UserId");
+                    b.Property<int>("OrderId");
 
                     b.HasKey("CommentId");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("PortfolioId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -211,18 +203,9 @@ namespace Tradingcenter.Data.Migrations
 
             modelBuilder.Entity("Trainingcenter.Domain.DomainModels.Comment", b =>
                 {
-                    b.HasOne("Trainingcenter.Domain.DomainModels.Order")
+                    b.HasOne("Trainingcenter.Domain.DomainModels.Order", "Order")
                         .WithMany("Comments")
-                        .HasForeignKey("OrderId");
-
-                    b.HasOne("Trainingcenter.Domain.DomainModels.Portfolio", "Portfolio")
-                        .WithMany()
-                        .HasForeignKey("PortfolioId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Trainingcenter.Domain.DomainModels.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

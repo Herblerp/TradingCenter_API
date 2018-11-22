@@ -20,13 +20,15 @@ namespace Trainingcenter.Domain.Services.OrderServices
         private readonly IExchangeKeyRepository _keyRepo;
         private readonly IPortfolioRepository _portfolioRepo;
         private readonly IGenericRepository _genericRepo;
+        private readonly IUserRepository _userRepo;
 
-        public OrderServices(IOrderRepository orderRepo, IExchangeKeyRepository keyRepo, IGenericRepository genericRepo, IPortfolioRepository portfolioRepo)
+        public OrderServices(IOrderRepository orderRepo, IExchangeKeyRepository keyRepo, IGenericRepository genericRepo, IPortfolioRepository portfolioRepo, IUserRepository userRepo)
         {
             _orderRepo = orderRepo;
             _keyRepo = keyRepo;
             _portfolioRepo = portfolioRepo;
             _genericRepo = genericRepo;
+            _userRepo = userRepo;
     }
 
         #endregion
@@ -36,7 +38,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
         //Get all orders from all exchanges from a given user
         public async Task<List<Order>> GetAllOrders(int userId)
         {
-            var portfolio = await _portfolioRepo.GetFromNameAsync("default", userId);
+            var portfolio = await _portfolioRepo.GetDefaultPortfolioAsync(userId);
             int portfolioId = portfolio.PortfolioId;
 
             var orderList = new List<Order>();
@@ -52,7 +54,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
         public async Task<List<Order>> RefreshAllOrders(int userId)
         {
             //Get the default portfolio
-            var portfolio = await _portfolioRepo.GetFromNameAsync("default", userId);
+            var portfolio = await _portfolioRepo.GetDefaultPortfolioAsync(userId);
             int portfolioId = portfolio.PortfolioId;
 
             //Get the current time
@@ -86,7 +88,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             foreach(Order order in savedOrders)
             {
-                var orderPortfolio = new OrderPortfolio
+                var orderPortfolio = new PortfolioOrder
                 {
                     PortfolioId = portfolioId,
                     OrderId = order.OrderId
@@ -168,6 +170,11 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
         #region Services
 
+        public async Task<Order> GetOrderById(int orderId)
+        {
+            return await _orderRepo.GetOrderById(orderId);
+        }
+
         public async Task<List<OrderDTO>> GetOrders(int userId, int portfolioId, int amount, string dateFrom, string dateTo)
         {
             DateTime _dateFrom;
@@ -184,7 +191,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             if (portfolioId != 0)
             {
-                var portfolio = await _portfolioRepo.GetFromIdAsync(portfolioId);
+                var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
                 if (portfolio == null || portfolio.UserId != userId)
                 {
                     return null;
@@ -250,6 +257,122 @@ namespace Trainingcenter.Domain.Services.OrderServices
             return orderDTOList;
         }
 
+        public async Task<List<ProfitPerDayDTO>> GetProfitPerDayFromPortfolio(int userId, int portfolioId)
+        {
+
+            if (userId != 0)
+            {
+                var user = await _userRepo.GetFromIdAsync(userId);
+                if (user == null || user.UserId != userId)
+                {
+                    return null;
+                }
+            }
+            if (portfolioId != 0)
+            {
+                var portfolio = await _portfolioRepo.GetPortfolioByIdAsync(portfolioId);
+                if (portfolio == null || portfolio.UserId != userId)
+                {
+                    return null;
+                }
+            }
+            var orderList = new List<Order>();
+            orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolioId);
+            orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
+
+            var ProfitPerDayDTOList = new List<ProfitPerDayDTO>();
+            
+            foreach (Order order in orderList)
+            {
+                double profit = 0;
+                if (order.Side.Equals("Sell"))
+                {
+                    profit = order.Price;
+                }
+                else
+                {
+                    profit = order.Price * -1;
+                }
+
+                bool dayAlreadyInList = false;
+
+                foreach (ProfitPerDayDTO profitPerDay in ProfitPerDayDTOList)
+                {
+                    if (order.Timestamp.ToString("dd/MM/yyyy") == profitPerDay.Day)
+                    {
+                        profitPerDay.Profit = profitPerDay.Profit + profit;
+                        dayAlreadyInList = true;
+                    }
+                }
+
+                if (!dayAlreadyInList)
+                {
+
+                    ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.ToString("dd/MM/yyyy") });
+                }
+            }
+
+
+            return ProfitPerDayDTOList;
+        }
+
+
+
+        public async Task<List<ProfitPerDayDTO>> GetProfitPerDayFromUser(int userId)
+        {
+            if (userId != 0)
+            {
+                var usertest = await _userRepo.GetFromIdAsync(userId);
+                if (usertest == null || usertest.UserId != userId)
+                {
+                    return null;
+                }
+            }
+
+
+            var portfolioList = await _portfolioRepo.GetAllPortfolioByUserIdAsync(userId);
+            var ProfitPerDayDTOList = new List<ProfitPerDayDTO>();
+
+            foreach (Portfolio portfolio in portfolioList)
+            {
+                List<Order> orderList = await _orderRepo.GetOrdersFromPortfolioIdAsync(portfolio.PortfolioId);
+                orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
+
+                foreach (Order order in orderList)
+                {
+                    double profit = 0;
+
+                    if (order.Side.Equals("Sell"))
+                    {
+                        profit = order.Price;
+                    }
+                    else
+                    {
+                        profit = order.Price * -1;
+                    }
+
+                    bool dayAlreadyInList = false;
+
+                    foreach (ProfitPerDayDTO profitPerDay in ProfitPerDayDTOList)
+                    {
+                        if (order.Timestamp.ToString("dd/MM/yyyy") == profitPerDay.Day)
+                        {
+                            profitPerDay.Profit = profitPerDay.Profit + profit;
+                            dayAlreadyInList = true;
+                        }
+                    }
+
+                    if (!dayAlreadyInList)
+                    {
+
+                        ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.ToString("dd/MM/yyyy") });
+                    }
+                }
+            }
+
+            return ProfitPerDayDTOList;
+        }
+        
         #endregion
 
         #region Converters
@@ -281,6 +404,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             var orderDTO = new OrderDTO
             {
+                OrderId = order.OrderId,
                 Exchange = order.Exchange,
                 ExchangeOrderId = order.ExchangeOrderId,
                 Symbol = order.Symbol,
@@ -292,7 +416,17 @@ namespace Trainingcenter.Domain.Services.OrderServices
             };
             return orderDTO;
         }
-
+        /*
+        private ProfitPerDayDTO ConvertProfitPerDay(double profit, DateTime day)
+        {
+            var profitPerDayDTO = new ProfitPerDayDTO
+            {
+                Profit = profit,
+                Day = day
+            };
+            return profitPerDayDTO;
+        }
+        */
         #endregion
     }
 }
