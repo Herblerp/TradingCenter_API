@@ -123,8 +123,11 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
                 foreach (var BitMEXOrder in BitMEXOrderList)
                 {
-                    Order order = ConvertBitMEXOrder(BitMEXOrder, userId);
-                    orderList.Add(order);
+                    if (BitMEXOrder.ordStatus == "Canceled")
+                    {
+                        Order order = ConvertBitMEXOrder(BitMEXOrder, userId);
+                        orderList.Add(order);
+                    }
                 }
             }
             return orderList;
