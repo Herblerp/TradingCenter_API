@@ -165,6 +165,37 @@ namespace BitMEX_API
             return Query("GET", "/chat", param, true);
         }
 
+        public string GetWalletHistory()
+        {
+            var param = new Dictionary<string, string>();
+            return Query("GET", "/user/walletHistory", param, true);
+        }
+
+        //Only returns the history of the wallet of a given currency
+        public string GetWalletHistory(string currency)
+        {
+            var param = new Dictionary<string, string>();
+            param["currency"] = currency;
+            return Query("GET", "/user/walletHistory", param, true);
+        }
+
+        //Only returns a limited amount of data
+        public string GetWalletHistory(int count)
+        {
+            var param = new Dictionary<string, string>();
+            param["count"] = count.toString();
+            return Query("GET", "/user/walletHistory", param, true);
+        }
+
+        //Only returns a limited amount of data, of a given currency
+        public string GetWalletHistory(string currency, int count)
+        {
+            var param = new Dictionary<string, string>();
+            param["currency"] = currency;
+            param["count"] = count.toString();
+            return Query("GET", "/user/walletHistory", param, true);
+        }
+
         public string GetOrders()
         {
             var param = new Dictionary<string, string>();
