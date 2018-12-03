@@ -183,7 +183,7 @@ namespace BitMEX_API
         public string GetWalletHistory(int count)
         {
             var param = new Dictionary<string, string>();
-            param["count"] = count.toString();
+            param["count"] = count.ToString();
             return Query("GET", "/user/walletHistory", param, true);
         }
 
@@ -192,7 +192,7 @@ namespace BitMEX_API
         {
             var param = new Dictionary<string, string>();
             param["currency"] = currency;
-            param["count"] = count.toString();
+            param["count"] = count.ToString();
             return Query("GET", "/user/walletHistory", param, true);
         }
 

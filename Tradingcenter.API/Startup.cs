@@ -39,6 +39,8 @@ namespace Tradingcenter.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseHsts();
+            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.ConfigureExceptionHandler();
             app.ConfigureCors();

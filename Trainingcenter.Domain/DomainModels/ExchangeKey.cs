@@ -22,5 +22,8 @@ namespace Trainingcenter.Domain.DomainModels
         public DateTime LastRefresh { get; set; }
 
         public User User { get; set; }
+
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<Wallet> Transactions { get; set; }
     }
 }

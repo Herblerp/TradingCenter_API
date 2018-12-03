@@ -38,12 +38,33 @@ namespace Trainingcenter.Domain.Services.OrderServices
         //Get all orders from all exchanges from a given user
         public async Task<List<Order>> GetAllOrders(int userId)
         {
+            DateTime time = DateTime.Now;
+            time = time.AddDays(-1);
+
             var portfolio = await _portfolioRepo.GetDefaultPortfolioAsync(userId);
             int portfolioId = portfolio.PortfolioId;
 
+            var BitMEXKey = await _keyRepo.GetKeysFromNameAsync("BitMEX", userId);
+            var BinanceKey = await _keyRepo.GetKeysFromNameAsync("Binance", userId);
+
             var orderList = new List<Order>();
-            orderList.Concat(await GetBitMEXOrdersFromUserId(userId, portfolioId));
-            //orderList.Concat(await GetBinanceOrdersFromUserId(userId));
+
+            foreach (ExchangeKey key in BitMEXKey)
+            {
+                orderList.AddRange(await GetBitMEXOrdersFromUserId(userId, portfolioId));
+                key.LastRefresh = time;
+
+                foreach (Order order in orderList)
+                {
+                    order.ExchangeKeyId = key.ExchangeKeyId;
+                }
+
+                await _genericRepo.UpdateAsync(key);
+            }
+            foreach (ExchangeKey key in BinanceKey)
+            {
+                orderList.AddRange(await GetBinanceOrdersFromUserId(userId));
+            }
 
             var savedOrders = await _orderRepo.SaveOrdersAsync(orderList);
 
@@ -72,15 +93,17 @@ namespace Trainingcenter.Domain.Services.OrderServices
             {
                 orderList.AddRange(await GetBitMEXOrdersFromUserId(userId, portfolioId, key.LastRefresh.Date));
                 key.LastRefresh = time;
+
+                foreach (Order order in orderList)
+                {
+                    order.ExchangeKeyId = key.ExchangeKeyId;
+                }
+
                 await _genericRepo.UpdateAsync(key);
             }
             foreach (ExchangeKey key in BinanceKey)
             {
                 orderList.AddRange(await GetBinanceOrdersFromUserId(userId, portfolioId, key.LastId));
-            }
-            foreach (Order order in orderList)
-            {
-
             }
 
             //Save the orders
@@ -151,7 +174,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
                 try
                 {
-                    var BitMEXOrderList = JsonConvert.DeserializeObject<List<BitMEXOrder>>(temp);
+                    var BitMEXOrderList = JsonConvert.DeserializeObject<List<BitMEXOrder>>(temp, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
                     foreach (var BitMEXOrder in BitMEXOrderList)
                     {
                         Order order = ConvertBitMEXOrder(BitMEXOrder, userId);

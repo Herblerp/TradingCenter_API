@@ -16,6 +16,8 @@ namespace Tradingcenter.Data
         public DbSet<Note> Notes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<PortfolioOrder> OrderPortolios { get; set; }
+        public DbSet<Wallet> Transactions { get; set; }
+        public DbSet<PurchasedPortfolio> PurchasedPortfolios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

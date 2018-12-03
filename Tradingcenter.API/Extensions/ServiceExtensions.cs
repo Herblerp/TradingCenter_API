@@ -18,7 +18,9 @@ using Trainingcenter.Domain.Services.ExchangeKeyServices;
 using Trainingcenter.Domain.Services.NoteServices;
 using Trainingcenter.Domain.Services.OrderServices;
 using Trainingcenter.Domain.Services.PortfolioServices;
+using Trainingcenter.Domain.Services.PurchasedPortfolioServices;
 using Trainingcenter.Domain.Services.UserServices;
+using Trainingcenter.Domain.Services.WalletServices;
 
 /*  This class contains the service configurations,
     to keep the startup class more readable.    */
@@ -52,6 +54,10 @@ namespace Tradingcenter.API.Extensions
             services.AddScoped<INoteServices, NoteServices>();
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<ICommentServices, CommentServices>();
+            services.AddScoped<IWalletRepository, WalletRepository>();
+            services.AddScoped<IWalletServices, WalletServices>();
+            services.AddScoped<IPurchasedPortfolioRepository, PurchasedPortfolioRepository>();
+            services.AddScoped<IPurchasedPortfolioServices, PurchasedPortfolioServices>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
