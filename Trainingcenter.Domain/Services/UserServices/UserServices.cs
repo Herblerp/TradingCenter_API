@@ -128,6 +128,9 @@ namespace Trainingcenter.Domain.Services.UserServices
             if (userToUpdate.Email != null && IsValidEmail(userToUpdate.Email))
                 user.Email = userToUpdate.Email;
 
+            if (userToUpdate.PictureURL != null)
+                user.PictureURL = userToUpdate.PictureURL;
+
             return ConvertUser(await _genericRepo.UpdateAsync(user));
         }
 

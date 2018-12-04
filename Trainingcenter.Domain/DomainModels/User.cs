@@ -24,7 +24,7 @@ namespace Trainingcenter.Domain.DomainModels
         public DateTime CreatedOn { get; set; }
         public DateTime LastActive { get; set; }
 
-        public Picture Picture { get; set; }
+        public string PictureURL { get; set; }
         public ICollection<Order> Orders { get; set; }
         public ICollection<Portfolio> Portfolios { get; set; }
         public ICollection<ExchangeKey> ExchangeKeys { get; set; }
