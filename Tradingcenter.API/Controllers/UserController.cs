@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Trainingcenter.Domain.DTOs.UserDTOs;
 using Trainingcenter.Domain.Services;
+using System.Text.Encodings.Web;
 
 //DONE
 namespace Tradingcenter.API.Controllers
@@ -19,11 +20,21 @@ namespace Tradingcenter.API.Controllers
 
         private readonly IUserServices _userService;
         public IConfiguration _config;
+        private HtmlEncoder _htmlEncoder;
+        private JavaScriptEncoder _javaScriptEncoder;
+        private UrlEncoder _urlEncoder;
 
-       public UserController(IUserServices userService, IConfiguration config)
+        public UserController(  IUserServices userService, 
+                                IConfiguration config, 
+                                HtmlEncoder htmlEncoder,
+                                JavaScriptEncoder javascriptEncoder,
+                                UrlEncoder urlEncoder)
         {
             _userService = userService;
             _config = config;
+            _htmlEncoder = htmlEncoder;
+            _javaScriptEncoder = javascriptEncoder;
+            _urlEncoder = urlEncoder;
         }
 
         #endregion
@@ -76,6 +87,8 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
+                userToRegister.Username = _htmlEncoder.Encode(userToRegister.Username);
+
                 if (await _userService.UserExists(userToRegister.Username))
                 {
                     return StatusCode(400, "Username already taken");
@@ -95,7 +108,12 @@ namespace Tradingcenter.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(UserToUpdateDTO userToUpdate)
         {
-            if (userToUpdate.Email != null && !_userService.IsValidEmail(userToUpdate.Email))
+            userToUpdate.FirstName = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.FirstName));
+            userToUpdate.LastName = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.LastName));
+            userToUpdate.Phone = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.Phone));
+            userToUpdate.Email = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.Email));
+
+           if (userToUpdate.Email != null && !_userService.IsValidEmail(userToUpdate.Email))
             {
                 return StatusCode(400, "Thats not an email address...");
             }

@@ -169,7 +169,7 @@ namespace Tradingcenter.API.Controllers
             }
             if (order.UserId != userId || portfolio.UserId != userId)
             {
-                return StatusCode(401);
+                return StatusCode(401, "You can not delete orders from the default portfolio");
             }
             if (!await _portfolioServices.PortfolioOrderExists(orderId, portfolioId))
             {

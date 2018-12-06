@@ -47,6 +47,28 @@ namespace Tradingcenter.API.Controllers
                 return StatusCode(500, "Something went wrong while attempting to get orders");
             }
         }
+
+        [HttpGet("getNotInPortfolio")]
+        public async Task<IActionResult> GetOrdertsNotInPortfolio(int portfolioId)
+        {
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var orderlist = await _orderServices.GetOrders(userId, 0, 50, null, null);
+            var portfolioOrderList = await _orderServices.GetOrders(userId, portfolioId, 199, null, null);
+
+            foreach (OrderDTO order in orderlist)
+            {
+                foreach(OrderDTO pOrderd in portfolioOrderList)
+                {
+                    if(order.OrderId == pOrderd.OrderId)
+                    {
+                        orderlist.Remove(order);
+                    }
+                }
+            }
+
+            return StatusCode(200, orderlist);
+        }
+
         [HttpGet("refresh")]
         public async Task<IActionResult> RefreshOrders()
         {

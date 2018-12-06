@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,12 +22,23 @@ namespace Tradingcenter.API.Controllers
         private readonly ICommentServices _commentServices;
         private readonly IUserServices _userServices;
         private readonly IPortfolioServices _portfolioServices;
+        private HtmlEncoder _htmlEncoder;
+        private JavaScriptEncoder _javaScriptEncoder;
+        private UrlEncoder _urlEncoder;
 
-        public CommentController(ICommentServices commentServices, IUserServices userServices, IPortfolioServices portfolioServices)
+        public CommentController(   ICommentServices commentServices, 
+                                    IUserServices userServices, 
+                                    IPortfolioServices portfolioServices,
+                                    HtmlEncoder htmlEncoder,
+                                    JavaScriptEncoder javascriptEncoder,
+                                    UrlEncoder urlEncoder)
         {
             _commentServices = commentServices;
             _userServices = userServices;
             _portfolioServices = portfolioServices;
+            _htmlEncoder = htmlEncoder;
+            _javaScriptEncoder = javascriptEncoder;
+            _urlEncoder = urlEncoder;
         }
 
         [HttpGet]
@@ -56,6 +68,9 @@ namespace Tradingcenter.API.Controllers
             {
                 return StatusCode(400, "Portfolio with id " + comment.PortfolioId + " was not found.");
             }
+
+            comment.Message = _javaScriptEncoder.Encode(_htmlEncoder.Encode(comment.Message));
+
             comment.UserId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var createdComment = await _commentServices.CreateComment(comment);
             return StatusCode(200);
@@ -64,7 +79,10 @@ namespace Tradingcenter.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(CommentToUpdateDTO comment)
         {
-            if(await _commentServices.GetCommentById(comment.CommentId) == null)
+
+            comment.Message = _javaScriptEncoder.Encode(_htmlEncoder.Encode(comment.Message));
+
+            if (await _commentServices.GetCommentById(comment.CommentId) == null)
             {
                 return StatusCode(400, "Comment with id " + comment.CommentId + " was not found.");
             }
