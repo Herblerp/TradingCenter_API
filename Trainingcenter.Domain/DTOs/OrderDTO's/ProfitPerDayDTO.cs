@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +7,9 @@ namespace Trainingcenter.Domain.DTOs.OrderDTO_s
 {
     public class ProfitPerDayDTO
     {
-        public double Profit { get; set; }
-        public string Day { get; set; }
+        public string Name { get; set; }
+        public int ExchangeKeyId { get; set; }
+        public ICollection<ProfitPerDay> ProfitPerDayList { get; set; }
+
     }
 }
