@@ -10,6 +10,7 @@ namespace Trainingcenter.Domain.Services
     {
         Task<UserDTO> Register(UserToRegisterDTO userToRegister);
         Task<UserDTO> Login(UserToLoginDTO userToLogin);
+        Task<UserDTO> GetUserById(int userId);
         Task<bool> UserExists(string username);
         Task<UserDTO> UpdateUser(UserToUpdateDTO userToUpdate, int userId);
         bool IsValidEmail(string email);

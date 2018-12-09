@@ -107,5 +107,16 @@ namespace Tradingcenter.API.Controllers
             }
             return StatusCode(200);
         }
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await _userService.GetUserById(userId);
+            if(user == null)
+            {
+                return StatusCode(400, "User with id " + userId + " was not found.");
+            }
+            return StatusCode(200, user);
+        }
     }
 }
