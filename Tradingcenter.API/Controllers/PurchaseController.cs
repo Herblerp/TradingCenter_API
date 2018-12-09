@@ -34,17 +34,26 @@ namespace Tradingcenter.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(PurchasedPortfolioDTO ppDTO)
+        public async Task<IActionResult> Post(int portfolioId)
         {
-            if(await _ppServices.Exists(ppDTO.UserId, ppDTO.PortfolioId))
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var ppDTO = new PurchasedPortfolioDTO()
+            {
+                UserId = userId,
+                PortfolioId = portfolioId
+            };
+
+            if (ppDTO.PortfolioId == 0)
+            {
+                return StatusCode(400, "portfolioId can not be 0");
+            }
+
+            if (await _ppServices.Exists(ppDTO.UserId, ppDTO.PortfolioId))
             {
                 return StatusCode(400, "Entry already exists");
             }
 
-            if(ppDTO.PortfolioId == 0 || ppDTO.UserId == 0)
-            {
-                return StatusCode(400, "portfolioId and userId can not be 0");
-            }
             var createdPurchase = await _ppServices.AddPurchasedPortfolio(ppDTO);
 
             return StatusCode(200);
