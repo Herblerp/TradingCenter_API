@@ -58,5 +58,13 @@ namespace Tradingcenter.API.Controllers
             }
             return StatusCode(200);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrder(OrderDTO orderToUpdate)
+        {
+            var order = await _orderServices.UpdateOrder(orderToUpdate);
+
+            return StatusCode(200, order);
+        }
     }
 }

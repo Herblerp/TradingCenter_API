@@ -14,6 +14,9 @@ namespace Trainingcenter.Domain.DTOs.OrderDTO_s
         public double OrderQty { get; set; }
         public string Currency { get; set; }
         public double Price { get; set; }
+        public string Description { get; set; }
+        public string ImgURL { get; set; }
+        public bool IsSold { get; set; }
         public DateTime Timestamp { get; set; }
     }
 }
