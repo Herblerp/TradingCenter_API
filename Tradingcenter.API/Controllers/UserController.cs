@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Trainingcenter.Domain.DTOs.UserDTOs;
 using Trainingcenter.Domain.Services;
 using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authorization;
 
 //DONE
 namespace Tradingcenter.API.Controllers
@@ -99,13 +100,35 @@ namespace Tradingcenter.API.Controllers
                     return StatusCode(400, "Invalid email");
                 }
                 var user = await _userService.Register(userToRegister);
-                return StatusCode(200);
+                return StatusCode(200, user);
             }
             catch
             {
                 return StatusCode(500, "Something went wrong while attempting to register, please try again in a few moments.");
             }
         }
+
+        [Authorize]
+        [HttpPost("validate/{key}")]
+        public async Task<IActionResult> Validate(string key)
+        {
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await _userService.GetUserById(userId);
+
+            if(user.VerificationKey == key)
+            {
+                var userToUpdate = new UserToUpdateDTO();
+                userToUpdate.IsVerified = true;
+                userToUpdate.VerificationKey = null;
+                await _userService.UpdateUser(userToUpdate, userId);
+
+                return StatusCode(200);
+            }
+            return StatusCode(400, "Failed to verify email");
+
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post(UserToUpdateDTO userToUpdate)
         {
@@ -114,6 +137,7 @@ namespace Tradingcenter.API.Controllers
             userToUpdate.Phone = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.Phone));
             userToUpdate.Email = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.Email));
             userToUpdate.Username = _htmlEncoder.Encode(_javaScriptEncoder.Encode(userToUpdate.Username));
+            userToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(userToUpdate.Description));
 
            if (userToUpdate.Email != null && !_userService.IsValidEmail(userToUpdate.Email))
             {
@@ -137,6 +161,15 @@ namespace Tradingcenter.API.Controllers
                 return StatusCode(400, "User with id " + userId + " was not found.");
             }
             return StatusCode(200, user);
+        }
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUser(string username)
+        {
+            if(username == null)
+            {
+                return StatusCode(400, "Please specify a username");
+            }
+            return StatusCode(200, await _userService.SearchUser(username));
         }
     }
 }

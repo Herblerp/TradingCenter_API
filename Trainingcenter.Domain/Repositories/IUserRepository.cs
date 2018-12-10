@@ -10,5 +10,6 @@ namespace Trainingcenter.Domain.Repositories
     {
         Task<User> GetFromIdAsync(int userId);
         Task<User> GetFromUsernameAsync(string username);
+        Task<List<User>> GetAll();
     }
 }

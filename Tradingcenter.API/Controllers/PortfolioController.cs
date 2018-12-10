@@ -41,7 +41,7 @@ namespace Tradingcenter.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(int portfolioId)
+        public async Task<IActionResult> Get(int portfolioId, bool soldOnly)
         {
             try
             {
@@ -49,8 +49,24 @@ namespace Tradingcenter.API.Controllers
 
                 if (portfolioId == 0)
                 {
-                    return StatusCode(200, await _portfolioServices.GetAllPortfolioByUserIdAsync(userId));
+                    var portfolios = await _portfolioServices.GetAllPortfolioByUserIdAsync(userId);
+                    if (soldOnly == true)
+                    {
+                        var soldPortfolios = new List<PortfolioDTO>();
+
+                        foreach(PortfolioDTO p in portfolios)
+                        {
+                            if(p.IsForSale == true)
+                            {
+                                soldPortfolios.Add(p);
+                            }
+                        }
+                        return StatusCode(200, soldPortfolios);
+                    }
+
+                    return StatusCode(200, portfolios);
                 }
+
                 var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
 
                 if (portfolio.UserId == userId)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
@@ -44,6 +45,7 @@ namespace Trainingcenter.Domain.Services.UserServices
                 {
                     return null;
                 }
+                
 
                 userFromDB.LastActive = DateTime.Now;
                 await _genericRepo.UpdateAsync(userFromDB);
@@ -60,7 +62,6 @@ namespace Trainingcenter.Domain.Services.UserServices
         {
             try
             {
-
                 //Set username to lowercase
                 userToRegister.Username = userToRegister.Username.ToLower();
 
@@ -77,6 +78,9 @@ namespace Trainingcenter.Domain.Services.UserServices
                 userToCreate.PasswordHash = passwordHash;
                 userToCreate.PasswordSalt = passwordSalt;
                 userToCreate.CreatedOn = DateTime.Now;
+                userToCreate.VerificationKey = GetUniqueKey(128);
+                userToCreate.IsVerified = false;
+
 
                 //Create the user
                 await _genericRepo.AddAsync(userToCreate);
@@ -94,7 +98,9 @@ namespace Trainingcenter.Domain.Services.UserServices
                 var userToReturn = new UserDTO
                 {
                     UserId = createdUser.UserId,
-                    Username = createdUser.Username
+                    Username = createdUser.Username,
+                    VerificationKey = createdUser.VerificationKey,
+                    Email = createdUser.Email
                     //More fields here
                 };
 
@@ -131,6 +137,9 @@ namespace Trainingcenter.Domain.Services.UserServices
             if (userToUpdate.PictureURL != null)
                 user.PictureURL = userToUpdate.PictureURL;
 
+            if (userToUpdate.Description != null)
+                user.Description = userToUpdate.Description;
+
             return ConvertUser(await _genericRepo.UpdateAsync(user));
         }
 
@@ -156,10 +165,40 @@ namespace Trainingcenter.Domain.Services.UserServices
             }
         }
 
+        public async Task<UserDTO> ValidateUser(int userId)
+        {
+            User user = await _userRepo.GetFromIdAsync(userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            user.VerificationKey = null;
+            user.IsVerified = true;
+
+            return ConvertUser(await _genericRepo.UpdateAsync(user));
+        }
+
         public async Task<UserDTO> GetUserById(int userId)
         {
             var user = ConvertUser(await _userRepo.GetFromIdAsync(userId));
             return user;
+        }
+
+        public async Task<List<UserDTO>> SearchUser(string username)
+        {
+            var allUsers = await _userRepo.GetAll();
+            var foundUsers = new List<UserDTO>();
+
+            foreach (User user in allUsers)
+            {
+                if (user.Username.Contains(username))
+                {
+                    foundUsers.Add(ConvertUser(user));
+                }
+            }
+            return foundUsers;
         }
 
         #endregion
@@ -200,12 +239,35 @@ namespace Trainingcenter.Domain.Services.UserServices
             var userDTO = new UserDTO
             {
                 UserId = user.UserId,
-                Username = user.Username
-                //More fields here
+                Username = user.Username,
+                Phone = user.Phone,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                VerificationKey = user.VerificationKey,
+                IsVerified = user.IsVerified,
+                PictureURL = user.PictureURL,
+                Description = user.Description
             };
             return userDTO;
         }
 
         #endregion
+        private static string GetUniqueKey(int size)
+        {
+            char[] chars =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
+            byte[] data = new byte[size];
+            using (RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider())
+            {
+                crypto.GetBytes(data);
+            }
+            StringBuilder result = new StringBuilder(size);
+            foreach (byte b in data)
+            {
+                result.Append(chars[b % (chars.Length)]);
+            }
+            return result.ToString();
+        }
     }
 }

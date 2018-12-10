@@ -13,6 +13,8 @@ namespace Trainingcenter.Domain.Services
         Task<UserDTO> GetUserById(int userId);
         Task<bool> UserExists(string username);
         Task<UserDTO> UpdateUser(UserToUpdateDTO userToUpdate, int userId);
+        Task<UserDTO> ValidateUser(int userId);
+        Task<List<UserDTO>> SearchUser(string username);
         bool IsValidEmail(string email);
     }
 }

@@ -30,5 +30,10 @@ namespace Tradingcenter.Data.Repositories
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Username == username);
         }
+
+        public async Task<List<User>> GetAll()
+        {
+            return await _context.Users.ToListAsync();
+        }
     }
 }
