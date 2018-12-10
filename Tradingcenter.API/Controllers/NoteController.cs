@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,11 +21,18 @@ namespace Tradingcenter.API.Controllers
     {
         private readonly INoteServices _noteServices;
         private readonly IPortfolioServices _portfolioServices;
+        private HtmlEncoder _htmlEncoder;
+        private JavaScriptEncoder _javaScriptEncoder;
 
-        public NoteController(INoteServices noteServices, IPortfolioServices portfolioServices)
+        public NoteController(  INoteServices noteServices, 
+                                IPortfolioServices portfolioServices, 
+                                HtmlEncoder htmlEncoder,
+                                JavaScriptEncoder javascriptEncoder)
         {
             _noteServices = noteServices;
             _portfolioServices = portfolioServices;
+            _htmlEncoder = htmlEncoder;
+            _javaScriptEncoder = javascriptEncoder;
         }
 
         [HttpPut]
@@ -32,6 +40,7 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
+                noteToCreate.Message = _htmlEncoder.Encode(_javaScriptEncoder.Encode(noteToCreate.Message));
                 int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 var portfolio = await _portfolioServices.GetPortfolioByIdAsync(noteToCreate.PortfolioId);
@@ -58,6 +67,7 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
+                noteToUpdate.message = _htmlEncoder.Encode(_javaScriptEncoder.Encode(noteToUpdate.message));
                 int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 var note = await _noteServices.GetNoteById(noteToUpdate.noteId);

@@ -17,6 +17,7 @@ namespace Trainingcenter.Domain.DomainModels
         public string Goal { get; set; }
         public bool IsDefault { get; set; }
         public bool IsForSale { get; set; }
+        public string Address { get; set; }
 
         public ICollection<Note> Notes { get; set; }
         public ICollection<PortfolioOrder> PortfolioOrders { get; set; }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Encodings.Web;
 using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.DTOs.OrderDTO_s;
 using Trainingcenter.Domain.Services.OrderServices;
@@ -22,11 +23,18 @@ namespace Tradingcenter.API.Controllers
     {
         private readonly IOrderServices _orderServices;
         private readonly IPortfolioServices _portfolioServices;
+        private HtmlEncoder _htmlEncoder;
+        private JavaScriptEncoder _javaScriptEncoder;
 
-        public OrderController(IOrderServices orderService, IPortfolioServices portfolioServices)
+        public OrderController( IOrderServices orderService, 
+                                IPortfolioServices portfolioServices, 
+                                HtmlEncoder htmlEncoder,
+                                JavaScriptEncoder javascriptEncoder)
         {
             _orderServices = orderService;
             _portfolioServices = portfolioServices;
+            _htmlEncoder = htmlEncoder;
+            _javaScriptEncoder = javascriptEncoder;
         }
 
         [HttpGet("get")]
@@ -84,6 +92,8 @@ namespace Tradingcenter.API.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateOrder(OrderDTO orderToUpdate)
         {
+            orderToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(orderToUpdate.Description));
+            orderToUpdate.ImgURL = _javaScriptEncoder.Encode(orderToUpdate.ImgURL);
             var order = await _orderServices.UpdateOrder(orderToUpdate);
 
             return StatusCode(200, order);

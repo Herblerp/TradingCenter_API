@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -23,12 +24,20 @@ namespace Tradingcenter.API.Controllers
         private readonly ICommentServices _commentServices;
         private readonly IPortfolioServices _portfolioServices;
         private readonly IOrderServices _orderServices;
+        private HtmlEncoder _htmlEncoder;
+        private JavaScriptEncoder _javaScriptEncoder;
 
-        public PortfolioController(IPortfolioServices portfolioServices, IOrderServices orderServices, ICommentServices commentServices)
+        public PortfolioController( IPortfolioServices portfolioServices, 
+                                    IOrderServices orderServices, 
+                                    ICommentServices commentServices,
+                                    HtmlEncoder htmlEncoder,
+                                    JavaScriptEncoder javascriptEncoder)
         {
             _portfolioServices = portfolioServices;
             _orderServices = orderServices;
             _commentServices = commentServices;
+            _htmlEncoder = htmlEncoder;
+            _javaScriptEncoder = javascriptEncoder;
         }
 
         [HttpGet]
@@ -104,6 +113,11 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
+                portfolio.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolio.Description));
+                portfolio.Goal = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolio.Goal));
+                portfolio.ImgURL = _javaScriptEncoder.Encode(portfolio.ImgURL);
+                portfolio.Name = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolio.Name));
+
                 int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
                 await _portfolioServices.CreatePortfolioAsync(portfolio, userId, false);
 
@@ -190,6 +204,11 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
+                portfolioToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolioToUpdate.Description));
+                portfolioToUpdate.Goal = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolioToUpdate.Goal));
+                portfolioToUpdate.ImgURL = _javaScriptEncoder.Encode(portfolioToUpdate.ImgURL);
+                portfolioToUpdate.Name = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolioToUpdate.Name));
+
                 int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
                 var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioToUpdate.PortfolioId);

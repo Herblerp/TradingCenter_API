@@ -52,7 +52,8 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
                 Goal = portfolioToCreate.Goal,
                 IsDefault = isDefault,
                 ImgURL = portfolioToCreate.ImgURL,
-                IsForSale = portfolioToCreate.IsForSale
+                IsForSale = portfolioToCreate.IsForSale,
+                Address = portfolioToCreate.Address
             };
             return ConvertPortfolio(await _genericRepo.AddAsync(portfolio));
         }
@@ -66,6 +67,7 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             portfolio.Goal = portfolioToUpdate.Goal;
             portfolio.IsForSale = portfolioToUpdate.IsForSale;
             portfolio.ImgURL = portfolioToUpdate.ImgURL;
+            portfolio.Address = portfolioToUpdate.Address;
 
             return ConvertPortfolio(await _genericRepo.UpdateAsync(portfolio));
         }
@@ -119,7 +121,9 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
                 Description = portfolio.Description,
                 Goal = portfolio.Goal,
                 IsForSale = portfolio.IsForSale,
-                ImgURL = portfolio.ImgURL
+                ImgURL = portfolio.ImgURL,
+                Address = portfolio.Address
+                
             };
             return portfolioDTO;
         }

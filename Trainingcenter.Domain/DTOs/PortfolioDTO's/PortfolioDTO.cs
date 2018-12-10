@@ -17,5 +17,6 @@ namespace Trainingcenter.Domain.DTOs.PortfolioDTO_s
         public bool IsDefault { get; set; }
         public bool IsForSale { get; set; }
         public string ImgURL { get; set; }
+        public string Address { get; set; }
     }
 }

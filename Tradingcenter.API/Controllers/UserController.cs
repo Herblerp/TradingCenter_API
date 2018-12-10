@@ -87,7 +87,8 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
-                userToRegister.Username = _htmlEncoder.Encode(userToRegister.Username);
+                userToRegister.Email = _htmlEncoder.Encode(_javaScriptEncoder.Encode(userToRegister.Email));
+                userToRegister.Username = _htmlEncoder.Encode(_javaScriptEncoder.Encode(userToRegister.Username));
 
                 if (await _userService.UserExists(userToRegister.Username))
                 {
@@ -112,6 +113,7 @@ namespace Tradingcenter.API.Controllers
             userToUpdate.LastName = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.LastName));
             userToUpdate.Phone = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.Phone));
             userToUpdate.Email = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.Email));
+            userToUpdate.Username = _htmlEncoder.Encode(_javaScriptEncoder.Encode(userToUpdate.Username));
 
            if (userToUpdate.Email != null && !_userService.IsValidEmail(userToUpdate.Email))
             {
