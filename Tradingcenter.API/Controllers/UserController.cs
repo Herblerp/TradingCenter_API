@@ -117,11 +117,7 @@ namespace Tradingcenter.API.Controllers
 
             if(user.VerificationKey == key)
             {
-                var userToUpdate = new UserToUpdateDTO();
-                userToUpdate.IsVerified = true;
-                userToUpdate.VerificationKey = null;
-                await _userService.UpdateUser(userToUpdate, userId);
-
+                await _userService.ValidateUser(userId);
                 return StatusCode(200);
             }
             return StatusCode(400, "Failed to verify email");
