@@ -189,6 +189,19 @@ namespace Trainingcenter.Domain.Services.OrderServices
             return orderList;
         }
 
+        public async Task<OrderDTO> UpdateOrder(OrderDTO x)
+        {
+            var order = await _orderRepo.GetOrderById(x.OrderId);
+
+            order.Description = x.Description;
+            order.ImgURL = x.ImgURL;
+            order.IsSold = x.IsSold;
+
+            order = await _genericRepo.UpdateAsync(order);
+
+            return ConvertOrder(order);
+        }
+
         #endregion
 
         #region Services
@@ -415,7 +428,8 @@ namespace Trainingcenter.Domain.Services.OrderServices
                 Currency = bitMEXOrder.currency,
                 Price = (double)bitMEXOrder.price,
                 Timestamp = DateTime.Parse(bitMEXOrder.timestamp),
-                Side = bitMEXOrder.side
+                Side = bitMEXOrder.side,
+                IsSold = false
             };
             return order;
         }
@@ -435,6 +449,9 @@ namespace Trainingcenter.Domain.Services.OrderServices
                 OrderQty = order.OrderQty,
                 Currency = order.Currency,
                 Price = order.Price,
+                IsSold = order.IsSold,
+                Description = order.Description,
+                ImgURL = order.ImgURL,
                 Timestamp = order.Timestamp
             };
             return orderDTO;

@@ -50,7 +50,7 @@ namespace Trainingcenter.Domain.Services.UserServices
 
                 return ConvertUser(userFromDB);
             }
-            catch (Exception ex)
+            catch
             {
                 throw new Exception("UserService failed to login server");
             }
@@ -154,6 +154,12 @@ namespace Trainingcenter.Domain.Services.UserServices
             {
                 return false;
             }
+        }
+
+        public async Task<UserDTO> GetUserById(int userId)
+        {
+            var user = ConvertUser(await _userRepo.GetFromIdAsync(userId));
+            return user;
         }
 
         #endregion
