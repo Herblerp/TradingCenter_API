@@ -186,6 +186,12 @@ namespace Trainingcenter.Domain.Services.UserServices
             return user;
         }
 
+        public async Task<UserDTO> GetPublicUserById(int userId)
+        {
+            var user = ConvertPublicUser(await _userRepo.GetFromIdAsync(userId));
+            return user;
+        }
+
         public async Task<List<UserDTO>> SearchUser(string username)
         {
             var allUsers = await _userRepo.GetAll();
@@ -195,10 +201,16 @@ namespace Trainingcenter.Domain.Services.UserServices
             {
                 if (user.Username.Contains(username))
                 {
-                    foundUsers.Add(ConvertUser(user));
+                    foundUsers.Add(ConvertPublicUser(user));
                 }
             }
             return foundUsers;
+        }
+
+        public async Task<UserDTO> DeleteUser(int userId)
+        {
+            var user = await _userRepo.GetFromIdAsync(userId);
+            return ConvertUser(await _genericRepo.DeleteAsync(user));
         }
 
         #endregion
@@ -250,6 +262,20 @@ namespace Trainingcenter.Domain.Services.UserServices
                 Description = user.Description
             };
             return userDTO;
+        }
+
+        private UserDTO ConvertPublicUser(User user)
+        {
+            var publicUserDTO = new UserDTO
+            {
+                UserId = user.UserId,
+                Username = user.Username,
+                PictureURL = user.PictureURL,
+                Description = user.Description
+            };
+
+            return publicUserDTO;
+
         }
 
         #endregion

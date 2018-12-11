@@ -18,21 +18,39 @@ namespace Tradingcenter.Data.Repositories
             _context = context;
         }
 
-        public async Task<Comment> GetByIdAsync(int commentId)
+        public async Task<OrderComment> GetOrderCommentByIdAsync(int commentId)
         {
-            var comment = await _context.Comments.FirstOrDefaultAsync(x => x.CommentId == commentId);
+            var comment = await _context.OrderComments.FirstOrDefaultAsync(x => x.OrderCommentId == commentId);
             return comment;
         }
 
-        public async Task<List<Comment>> GetByPortfolioIdAsync(int portfolioId)
+        public async Task<List<OrderComment>> GetOrderCommentByOrderIdAsync(int orderId)
         {
-            var commentList = await _context.Comments.Where(x => x.PortfolioId == portfolioId).ToListAsync();
+            var commentList = await _context.OrderComments.Where(x => x.OrderId == orderId).ToListAsync();
             return commentList.OrderByDescending(x => x.PostedOn).ToList();
         }
 
-        public async Task<List<Comment>> GetByUserIdAsync(int userId)
+        public async Task<List<OrderComment>> GetOrderCommentByUserIdAsync(int userId)
         {
-            var commentList = await _context.Comments.Where(x => x.UserId == userId).ToListAsync();
+            var commentList = await _context.OrderComments.Where(x => x.UserId == userId).ToListAsync();
+            return commentList.OrderByDescending(x => x.PostedOn).ToList();
+        }
+
+        public async Task<PortfolioComment> GetPortfolioCommentByIdAsync(int commentId)
+        {
+            var comment = await _context.PortfolioComments.FirstOrDefaultAsync(x => x.PortfolioCommentId == commentId);
+            return comment;
+        }
+
+        public async Task<List<PortfolioComment>> GetPortfolioCommentByPortfolioIdAsync(int portfolioId)
+        {
+            var commentList = await _context.PortfolioComments.Where(x => x.PortfolioId == portfolioId).ToListAsync();
+            return commentList.OrderByDescending(x => x.PostedOn).ToList();
+        }
+
+        public async Task<List<PortfolioComment>> GetPortfolioCommentByUserIdAsync(int userId)
+        {
+            var commentList = await _context.PortfolioComments.Where(x => x.UserId == userId).ToListAsync();
             return commentList.OrderByDescending(x => x.PostedOn).ToList();
         }
     }

@@ -34,6 +34,6 @@ namespace Trainingcenter.Domain.DomainModels
         public ExchangeKey Exchangekey { get; set; }
 
         public ICollection<PortfolioOrder> OrderPortfolios { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public ICollection<PortfolioComment> Comments { get; set; }
     }
 }

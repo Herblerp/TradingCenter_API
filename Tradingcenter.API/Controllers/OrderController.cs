@@ -13,6 +13,7 @@ using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.DTOs.OrderDTO_s;
 using Trainingcenter.Domain.Services.OrderServices;
 using Trainingcenter.Domain.Services.PortfolioServices;
+using Trainingcenter.Domain.Services.CommentServices;
 
 namespace Tradingcenter.API.Controllers
 {
@@ -23,16 +24,19 @@ namespace Tradingcenter.API.Controllers
     {
         private readonly IOrderServices _orderServices;
         private readonly IPortfolioServices _portfolioServices;
+        private readonly ICommentServices _commentServices;
         private HtmlEncoder _htmlEncoder;
         private JavaScriptEncoder _javaScriptEncoder;
 
         public OrderController( IOrderServices orderService, 
-                                IPortfolioServices portfolioServices, 
+                                IPortfolioServices portfolioServices,
+                                ICommentServices commentServices,
                                 HtmlEncoder htmlEncoder,
                                 JavaScriptEncoder javascriptEncoder)
         {
             _orderServices = orderService;
             _portfolioServices = portfolioServices;
+            _commentServices = commentServices;
             _htmlEncoder = htmlEncoder;
             _javaScriptEncoder = javascriptEncoder;
         }
@@ -54,6 +58,17 @@ namespace Tradingcenter.API.Controllers
             {
                 return StatusCode(500, "Something went wrong while attempting to get orders");
             }
+        }
+
+        [HttpGet("Comment")]
+        public async Task<IActionResult> GetComments(int orderId)
+        {
+            if (await _orderServices.GetOrderById(orderId) == null)
+            {
+                return StatusCode(400, "Portfolio with id " + orderId + " was not found.");
+            }
+            var comments = await _commentServices.GetAllOrderCommentByOrderId(orderId);
+            return StatusCode(200, comments);
         }
 
         [HttpGet("getNotInPortfolio")]

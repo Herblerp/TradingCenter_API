@@ -147,17 +147,33 @@ namespace Tradingcenter.API.Controllers
             }
             return StatusCode(200);
         }
+
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(int userId)
         {
-            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = await _userService.GetUserById(userId);
-            if(user == null)
+            if (userId != 0)
             {
-                return StatusCode(400, "User with id " + userId + " was not found.");
+                var user = await _userService.GetPublicUserById(userId);
+                if (user == null)
+                {
+                    return StatusCode(400, "User with id " + userId + " was not found.");
+                }
+                return StatusCode(200, user);
             }
-            return StatusCode(200, user);
+            else
+            {
+                userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await _userService.GetUserById(userId);
+                if (user == null)
+                {
+                    return StatusCode(400, "User with id " + userId + " was not found.");
+                }
+                return StatusCode(200, user);
+            }
         }
+
+        [Authorize]
         [HttpGet("search")]
         public async Task<IActionResult> SearchUser(string username)
         {
@@ -166,6 +182,15 @@ namespace Tradingcenter.API.Controllers
                 return StatusCode(400, "Please specify a username");
             }
             return StatusCode(200, await _userService.SearchUser(username));
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser()
+        {
+            var userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            await _userService.DeleteUser(userId);
+            return StatusCode(200);
         }
     }
 }

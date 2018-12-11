@@ -5,17 +5,17 @@ using System.Text;
 
 namespace Trainingcenter.Domain.DomainModels
 {
-    public class Comment
+    public class OrderComment
     {
-        public int CommentId { get; set; }
-        public int PortfolioId { get; set; }
+        public int OrderCommentId { get; set; }
+        public int OrderId { get; set; }
         public int UserId { get; set; }
 
         [Required]
         public string Message { get; set; }
         public DateTime PostedOn { get; set; }
-        
-        public Portfolio Portfolio { get; set; }
+
+        public Order Order { get; set; }
         public User User { get; set; }
 
     }

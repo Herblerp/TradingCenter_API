@@ -41,16 +41,23 @@ namespace Tradingcenter.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(int portfolioId, bool soldOnly)
+        public async Task<IActionResult> Get(int userId, int portfolioId, bool soldOnly)
         {
             try
             {
-                int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                bool isCurrentUser = true;
+
+                if (userId == 0)
+                {
+                    userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                    isCurrentUser = false;
+                }
 
                 if (portfolioId == 0)
                 {
                     var portfolios = await _portfolioServices.GetAllPortfolioByUserIdAsync(userId);
-                    if (soldOnly == true)
+
+                    if (soldOnly == true || isCurrentUser == false)
                     {
                         var soldPortfolios = new List<PortfolioDTO>();
 
@@ -69,7 +76,7 @@ namespace Tradingcenter.API.Controllers
 
                 var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
 
-                if (portfolio.UserId == userId)
+                if (portfolio.UserId == userId || portfolio.IsForSale == true)
                 {
                     return StatusCode(200, portfolio);
                 }
@@ -120,7 +127,7 @@ namespace Tradingcenter.API.Controllers
             {
                 return StatusCode(400, "Portfolio with id " + portfolioId + " was not found.");
             }
-            var comments = await _commentServices.GetAllCommentByPortfolioId(portfolioId);
+            var comments = await _commentServices.GetAllPortfolioCommentByPortfolioId(portfolioId);
             return StatusCode(200, comments);
         }
 

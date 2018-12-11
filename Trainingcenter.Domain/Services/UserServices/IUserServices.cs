@@ -15,6 +15,8 @@ namespace Trainingcenter.Domain.Services
         Task<UserDTO> UpdateUser(UserToUpdateDTO userToUpdate, int userId);
         Task<UserDTO> ValidateUser(int userId);
         Task<List<UserDTO>> SearchUser(string username);
+        Task<UserDTO> GetPublicUserById(int userId);
+        Task<UserDTO> DeleteUser(int userId);
         bool IsValidEmail(string email);
     }
 }
