@@ -50,6 +50,9 @@ namespace Tradingcenter.API.Controllers
                 if (userId == 0)
                 {
                     userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                }
+                else
+                {
                     isCurrentUser = false;
                 }
 
