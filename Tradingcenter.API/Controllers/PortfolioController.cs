@@ -13,6 +13,7 @@ using Trainingcenter.Domain.DTOs.PortfolioOrderDTOs;
 using Trainingcenter.Domain.Services.CommentServices;
 using Trainingcenter.Domain.Services.OrderServices;
 using Trainingcenter.Domain.Services.PortfolioServices;
+using Trainingcenter.Domain.Services.PurchasedPortfolioServices;
 
 namespace Tradingcenter.API.Controllers
 {
@@ -24,12 +25,14 @@ namespace Tradingcenter.API.Controllers
         private readonly ICommentServices _commentServices;
         private readonly IPortfolioServices _portfolioServices;
         private readonly IOrderServices _orderServices;
+        private readonly IPurchasedPortfolioServices _ppServices;
         private HtmlEncoder _htmlEncoder;
         private JavaScriptEncoder _javaScriptEncoder;
 
         public PortfolioController( IPortfolioServices portfolioServices, 
                                     IOrderServices orderServices, 
                                     ICommentServices commentServices,
+                                    IPurchasedPortfolioServices ppServices,
                                     HtmlEncoder htmlEncoder,
                                     JavaScriptEncoder javascriptEncoder)
         {
@@ -38,6 +41,7 @@ namespace Tradingcenter.API.Controllers
             _commentServices = commentServices;
             _htmlEncoder = htmlEncoder;
             _javaScriptEncoder = javascriptEncoder;
+            _ppServices = ppServices;
         }
 
         [HttpGet]
@@ -89,6 +93,25 @@ namespace Tradingcenter.API.Controllers
             {
                 return StatusCode(500, "Something went wrong while attempting to get portfolios");
             }
+        }
+
+        [HttpGet("sold")]
+        public async Task<IActionResult> GetSoldPerMonth(int portfolioId)
+        {
+            var userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
+
+            if(portfolio == null)
+            {
+                return StatusCode(400, "Portfolio with id " + portfolioId + " was not found.");
+            }
+            if(portfolio.UserId != userId)
+            {
+                return StatusCode(401);
+            }
+            return StatusCode(200, await _ppServices.GetSoldPerMonth(portfolioId));
+
         }
 
         [HttpGet("profit")]

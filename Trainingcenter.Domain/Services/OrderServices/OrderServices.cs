@@ -352,8 +352,6 @@ namespace Trainingcenter.Domain.Services.OrderServices
             return ProfitPerDayDTOList;
         }
 
-
-
         public async Task<List<ProfitPerDayDTO>> GetProfitPerDayFromUser(int userId)
         {
             if (userId != 0)
@@ -400,7 +398,6 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
                     if (!dayAlreadyInList)
                     {
-
                         ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.ToString("dd/MM/yyyy") });
                     }
                 }
