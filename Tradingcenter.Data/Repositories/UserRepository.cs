@@ -35,5 +35,11 @@ namespace Tradingcenter.Data.Repositories
         {
             return await _context.Users.ToListAsync();
         }
+
+        public async Task<User> ValidateUser(string key)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.VerificationKey == key);
+            return user;
+        }
     }
 }

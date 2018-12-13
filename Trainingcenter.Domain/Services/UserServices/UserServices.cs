@@ -165,9 +165,9 @@ namespace Trainingcenter.Domain.Services.UserServices
             }
         }
 
-        public async Task<UserDTO> ValidateUser(int userId)
+        public async Task<UserDTO> ValidateUser(string key)
         {
-            User user = await _userRepo.GetFromIdAsync(userId);
+            User user = await _userRepo.ValidateUser(key);
 
             if (user == null)
             {

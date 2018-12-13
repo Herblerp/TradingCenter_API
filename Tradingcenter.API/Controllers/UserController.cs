@@ -108,19 +108,16 @@ namespace Tradingcenter.API.Controllers
             }
         }
 
-        [Authorize]
         [HttpPost("validate/{key}")]
         public async Task<IActionResult> Validate(string key)
         {
-            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = await _userService.GetUserById(userId);
 
-            if(user.VerificationKey == key)
-            {
-                await _userService.ValidateUser(userId);
-                return StatusCode(200);
-            }
-            return StatusCode(400, "Failed to verify email");
+            var user = await _userService.ValidateUser(key);
+
+            if(user == null)
+               return StatusCode(400, "Failed to verify email");
+
+            return StatusCode(200);
 
         }
 
