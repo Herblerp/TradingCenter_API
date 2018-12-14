@@ -122,8 +122,8 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
                 Goal = portfolio.Goal,
                 IsForSale = portfolio.IsForSale,
                 ImgURL = portfolio.ImgURL,
-                Address = portfolio.Address
-                
+                Address = portfolio.Address,
+                IsDefault = portfolio.IsDefault
             };
             return portfolioDTO;
         }

@@ -266,6 +266,10 @@ namespace Tradingcenter.API.Controllers
 
                 var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioToUpdate.PortfolioId);
 
+                if(portfolio == null)
+                {
+                    return StatusCode(400, "Portfolio with id " + portfolioToUpdate.PortfolioId + " was not found.");
+                }
                 if (portfolio.UserId == userId)
                 {
                     await _portfolioServices.UpdatePortfolioAsync(portfolioToUpdate);

@@ -108,8 +108,11 @@ namespace Tradingcenter.API.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateOrder(OrderDTO orderToUpdate)
         {
-            orderToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(orderToUpdate.Description));
-            orderToUpdate.ImgURL = _javaScriptEncoder.Encode(orderToUpdate.ImgURL);
+            if(orderToUpdate.Description != null)
+                orderToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(orderToUpdate.Description));
+            if(orderToUpdate.ImgURL != null)
+                orderToUpdate.ImgURL = _javaScriptEncoder.Encode(orderToUpdate.ImgURL);
+
             var order = await _orderServices.UpdateOrder(orderToUpdate);
 
             return StatusCode(200, order);
