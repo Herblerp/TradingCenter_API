@@ -253,10 +253,14 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
-                portfolioToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolioToUpdate.Description));
-                portfolioToUpdate.Goal = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolioToUpdate.Goal));
-                portfolioToUpdate.ImgURL = _javaScriptEncoder.Encode(portfolioToUpdate.ImgURL);
-                portfolioToUpdate.Name = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolioToUpdate.Name));
+                if(portfolioToUpdate.Description != null)
+                    portfolioToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolioToUpdate.Description));
+                if(portfolioToUpdate.Goal != null)
+                    portfolioToUpdate.Goal = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolioToUpdate.Goal));
+                if(portfolioToUpdate.ImgURL != null)
+                    portfolioToUpdate.ImgURL = _javaScriptEncoder.Encode(portfolioToUpdate.ImgURL);
+                if(portfolioToUpdate.Name != null)
+                    portfolioToUpdate.Name = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolioToUpdate.Name));
 
                 int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 

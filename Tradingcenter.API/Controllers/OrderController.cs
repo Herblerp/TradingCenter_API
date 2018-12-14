@@ -75,21 +75,22 @@ namespace Tradingcenter.API.Controllers
         public async Task<IActionResult> GetOrdertsNotInPortfolio(int portfolioId)
         {
             int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var orderlist = await _orderServices.GetOrders(userId, 0, 50, null, null);
+            var orderList = await _orderServices.GetOrders(userId, 0, 50, null, null);
             var portfolioOrderList = await _orderServices.GetOrders(userId, portfolioId, 199, null, null);
 
-            foreach (OrderDTO order in orderlist)
+            for (int i = 0; i<orderList.Count(); i++)
             {
+                var order = orderList[i];
                 foreach(OrderDTO pOrderd in portfolioOrderList)
                 {
                     if(order.OrderId == pOrderd.OrderId)
                     {
-                        orderlist.Remove(order);
+                        orderList.Remove(order);
                     }
                 }
             }
 
-            return StatusCode(200, orderlist);
+            return StatusCode(200, orderList);
         }
 
         [HttpGet("refresh")]
