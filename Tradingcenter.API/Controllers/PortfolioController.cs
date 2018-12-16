@@ -44,6 +44,16 @@ namespace Tradingcenter.API.Controllers
             _ppServices = ppServices;
         }
 
+        [HttpGet("forsale")]
+        public async Task<IActionResult> GetForSale()
+        {
+            var userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var list = await _portfolioServices.GetAllForSalePortfolios(userId);
+
+            return StatusCode(200,list);
+        }
+
         [HttpGet]
         public async Task<IActionResult> Get(int userId, int portfolioId, bool soldOnly)
         {

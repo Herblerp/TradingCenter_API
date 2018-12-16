@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.DTOs.PortfolioDTO_s;
@@ -108,6 +109,21 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             return (await _portfolioRepo.PortfolioOrderExists(orderId, portfolioId));
         }
 
+        public async Task<List<PortfolioDTO>> GetAllForSalePortfolios(int userId)
+        {
+            var portfolioList = await _portfolioRepo.GetAllForSalePortfolio(userId);
+            portfolioList = portfolioList.OrderByDescending(x => x.PortfolioId).ToList();
+            portfolioList = portfolioList.Take(200).ToList();
+
+            var pList = new List<PortfolioDTO>();
+
+            foreach(Portfolio p in portfolioList)
+            {
+                pList.Add(ConvertPortfolio(p));   
+            }
+
+            return pList;
+        }
         #endregion
 
         #region Converters

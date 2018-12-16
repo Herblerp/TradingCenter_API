@@ -35,6 +35,7 @@ namespace Trainingcenter.Domain.Services.CommentServices
         public async Task<OrderCommentDTO> CreateOrderComment(OrderCommentToCreateDTO commentToCreate)
         {
             var comment = ConvertOrderCommentToCreate(commentToCreate);
+            comment.PostedOn = DateTime.Now;
             return ConvertOrderComment(await _genericRepo.AddAsync(comment));
         }
 
