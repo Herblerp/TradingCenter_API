@@ -29,13 +29,15 @@ namespace Tradingcenter.API.Controllers
         private readonly ICommentServices _commentServices;
         private HtmlEncoder _htmlEncoder;
         private JavaScriptEncoder _javaScriptEncoder;
+        private UrlEncoder _urlEncoder;
 
         public OrderController( IOrderServices orderService, 
                                 IPortfolioServices portfolioServices,
                                 ICommentServices commentServices,
                                 IPurchasedPortfolioServices ppservices,
                                 HtmlEncoder htmlEncoder,
-                                JavaScriptEncoder javascriptEncoder)
+                                JavaScriptEncoder javascriptEncoder,
+                                UrlEncoder urlEncoder)
         {
             _orderServices = orderService;
             _portfolioServices = portfolioServices;
@@ -43,6 +45,7 @@ namespace Tradingcenter.API.Controllers
             _ppServices = ppservices;
             _htmlEncoder = htmlEncoder;
             _javaScriptEncoder = javascriptEncoder;
+            _urlEncoder = urlEncoder;
         }
 
         [HttpGet("get")]
@@ -129,9 +132,9 @@ namespace Tradingcenter.API.Controllers
             if(orderToUpdate.Description != null)
                 orderToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(orderToUpdate.Description));
 
-            if (orderToUpdate.ImgURL.Contains("javascript:"))
+            if(orderToUpdate.ImgURL != null)
             {
-                return StatusCode(400, "You sneaky cunt.");
+                orderToUpdate.ImgURL = _urlEncoder.Encode(orderToUpdate.ImgURL);
             }
 
             var order = await _orderServices.UpdateOrder(orderToUpdate);
