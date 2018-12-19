@@ -7,7 +7,6 @@ namespace Trainingcenter.Domain.DTOs.UserDTOs
 {
     public class UserToLoginDTO
     {
-        [Required]
         public string Username { get; set; }
 
         [Required]

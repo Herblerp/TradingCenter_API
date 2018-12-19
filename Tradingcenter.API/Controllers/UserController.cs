@@ -183,10 +183,10 @@ namespace Tradingcenter.API.Controllers
 
         [Authorize]
         [HttpDelete]
-        public async Task<IActionResult> DeleteUser()
+        public async Task<IActionResult> DeleteUser(UserToLoginDTO user)
         {
             var userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            await _userService.DeleteUser(userId);
+            await _userService.DeleteUser(userId, user.Password);
             return StatusCode(200);
         }
     }

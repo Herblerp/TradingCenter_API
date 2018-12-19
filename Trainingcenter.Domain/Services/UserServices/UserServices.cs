@@ -217,9 +217,15 @@ namespace Trainingcenter.Domain.Services.UserServices
             return foundUsers;
         }
 
-        public async Task<UserDTO> DeleteUser(int userId)
+        public async Task<UserDTO> DeleteUser(int userId, string password)
         {
             var user = await _userRepo.GetFromIdAsync(userId);
+
+            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            {
+                return null;
+            }
+
             return ConvertUser(await _genericRepo.DeleteAsync(user));
         }
 
