@@ -14,6 +14,7 @@ using Trainingcenter.Domain.DTOs.OrderDTO_s;
 using Trainingcenter.Domain.Services.OrderServices;
 using Trainingcenter.Domain.Services.PortfolioServices;
 using Trainingcenter.Domain.Services.CommentServices;
+using Trainingcenter.Domain.Services.PurchasedPortfolioServices;
 
 namespace Tradingcenter.API.Controllers
 {
@@ -24,6 +25,7 @@ namespace Tradingcenter.API.Controllers
     {
         private readonly IOrderServices _orderServices;
         private readonly IPortfolioServices _portfolioServices;
+        private readonly IPurchasedPortfolioServices _ppServices;
         private readonly ICommentServices _commentServices;
         private HtmlEncoder _htmlEncoder;
         private JavaScriptEncoder _javaScriptEncoder;
@@ -31,12 +33,14 @@ namespace Tradingcenter.API.Controllers
         public OrderController( IOrderServices orderService, 
                                 IPortfolioServices portfolioServices,
                                 ICommentServices commentServices,
+                                IPurchasedPortfolioServices ppservices,
                                 HtmlEncoder htmlEncoder,
                                 JavaScriptEncoder javascriptEncoder)
         {
             _orderServices = orderService;
             _portfolioServices = portfolioServices;
             _commentServices = commentServices;
+            _ppServices = ppservices;
             _htmlEncoder = htmlEncoder;
             _javaScriptEncoder = javascriptEncoder;
         }
@@ -58,6 +62,20 @@ namespace Tradingcenter.API.Controllers
             {
                 return StatusCode(500, "Something went wrong while attempting to get orders");
             }
+        }
+        [HttpGet("getFromSold")]
+        public async Task<IActionResult> GetFromSold(int portfolioId)
+        {
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
+
+            if(await _ppServices.Exists(userId, portfolioId))
+            {
+                var orders = await _orderServices.GetOrders(portfolio.UserId, portfolioId, 0, null, null);
+                return StatusCode(200, orders);
+            }
+            return StatusCode(400, "Computer sais no");
         }
 
         [HttpGet("Comment")]
@@ -110,8 +128,11 @@ namespace Tradingcenter.API.Controllers
         {
             if(orderToUpdate.Description != null)
                 orderToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(orderToUpdate.Description));
-            if(orderToUpdate.ImgURL != null)
-                orderToUpdate.ImgURL = _javaScriptEncoder.Encode(orderToUpdate.ImgURL);
+
+            if (orderToUpdate.ImgURL.Contains("javascript:"))
+            {
+                return StatusCode(400, "You sneaky cunt.");
+            }
 
             var order = await _orderServices.UpdateOrder(orderToUpdate);
 

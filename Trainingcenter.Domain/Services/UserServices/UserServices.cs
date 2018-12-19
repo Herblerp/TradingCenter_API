@@ -122,6 +122,16 @@ namespace Trainingcenter.Domain.Services.UserServices
             }
 
             //Add check for empty strings
+            if (userToUpdate.Password != null)
+            {
+                byte[] passwordHash, passwordSalt;
+                CreatePasswordHash(userToUpdate.Password, out passwordHash, out passwordSalt);
+
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+            }
+                
+
             if(userToUpdate.FirstName != null)
                 user.FirstName = userToUpdate.FirstName;
 
