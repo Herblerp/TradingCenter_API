@@ -2,20 +2,49 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tradingcenter.Data;
 
 namespace Tradingcenter.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20181210181819_portfolioUpdate2")]
+    partial class portfolioUpdate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.Comment", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Message")
+                        .IsRequired();
+
+                    b.Property<int?>("OrderId");
+
+                    b.Property<int>("PortfolioId");
+
+                    b.Property<DateTime>("PostedOn");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("PortfolioId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
 
             modelBuilder.Entity("Trainingcenter.Domain.DomainModels.ExchangeKey", b =>
                 {
@@ -106,29 +135,6 @@ namespace Tradingcenter.Data.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.OrderComment", b =>
-                {
-                    b.Property<int>("OrderCommentId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Message")
-                        .IsRequired();
-
-                    b.Property<int>("OrderId");
-
-                    b.Property<DateTime>("PostedOn");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("OrderCommentId");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("OrderComments");
-                });
-
             modelBuilder.Entity("Trainingcenter.Domain.DomainModels.Portfolio", b =>
                 {
                     b.Property<int>("PortfolioId")
@@ -158,33 +164,6 @@ namespace Tradingcenter.Data.Migrations
                     b.ToTable("Portfolios");
                 });
 
-            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.PortfolioComment", b =>
-                {
-                    b.Property<int>("PortfolioCommentId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Message")
-                        .IsRequired();
-
-                    b.Property<int?>("OrderId");
-
-                    b.Property<int>("PortfolioId");
-
-                    b.Property<DateTime>("PostedOn");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("PortfolioCommentId");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("PortfolioId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PortfolioComments");
-                });
-
             modelBuilder.Entity("Trainingcenter.Domain.DomainModels.PortfolioOrder", b =>
                 {
                     b.Property<int>("OrderId");
@@ -205,8 +184,6 @@ namespace Tradingcenter.Data.Migrations
 
                     b.Property<int>("PortfolioId");
 
-                    b.Property<DateTime>("PurchasedOn");
-
                     b.Property<int>("UserId");
 
                     b.HasKey("PurchasedPortfolioId");
@@ -225,14 +202,10 @@ namespace Tradingcenter.Data.Migrations
 
                     b.Property<DateTime>("CreatedOn");
 
-                    b.Property<string>("Description");
-
                     b.Property<string>("Email")
                         .IsRequired();
 
                     b.Property<string>("FirstName");
-
-                    b.Property<bool>("IsVerified");
 
                     b.Property<DateTime>("LastActive");
 
@@ -250,8 +223,6 @@ namespace Tradingcenter.Data.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired();
-
-                    b.Property<string>("VerificationKey");
 
                     b.HasKey("UserId");
 
@@ -286,6 +257,23 @@ namespace Tradingcenter.Data.Migrations
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.Comment", b =>
+                {
+                    b.HasOne("Trainingcenter.Domain.DomainModels.Order")
+                        .WithMany("Comments")
+                        .HasForeignKey("OrderId");
+
+                    b.HasOne("Trainingcenter.Domain.DomainModels.Portfolio", "Portfolio")
+                        .WithMany()
+                        .HasForeignKey("PortfolioId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Trainingcenter.Domain.DomainModels.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Trainingcenter.Domain.DomainModels.ExchangeKey", b =>
                 {
                     b.HasOne("Trainingcenter.Domain.DomainModels.User", "User")
@@ -315,40 +303,10 @@ namespace Tradingcenter.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.OrderComment", b =>
-                {
-                    b.HasOne("Trainingcenter.Domain.DomainModels.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Trainingcenter.Domain.DomainModels.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("Trainingcenter.Domain.DomainModels.Portfolio", b =>
                 {
                     b.HasOne("Trainingcenter.Domain.DomainModels.User", "User")
                         .WithMany("Portfolios")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Trainingcenter.Domain.DomainModels.PortfolioComment", b =>
-                {
-                    b.HasOne("Trainingcenter.Domain.DomainModels.Order")
-                        .WithMany("Comments")
-                        .HasForeignKey("OrderId");
-
-                    b.HasOne("Trainingcenter.Domain.DomainModels.Portfolio", "Portfolio")
-                        .WithMany()
-                        .HasForeignKey("PortfolioId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Trainingcenter.Domain.DomainModels.User", "User")
-                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Trainingcenter.Domain.DTOs.CommentDTOs
+namespace Trainingcenter.Domain.DTOs.PortfolioCommentDTOs
 {
-    public class CommentToCreateDTO
+    public class PortfolioCommentToCreateDTO
     {
         public int UserId { get; set; }
 

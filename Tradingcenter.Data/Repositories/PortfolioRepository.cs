@@ -63,5 +63,11 @@ namespace Tradingcenter.Data.Repositories
             List<PortfolioOrder> poList = await _context.OrderPortolios.Where(x => x.PortfolioId == portfolioId).ToListAsync();
             return poList;
         }
+
+        public async Task<List<Portfolio>> GetAllForSalePortfolio(int userId)
+        {
+            var list = await _context.Portfolios.Where(x => x.IsForSale == true && x.UserId != userId).ToListAsync();
+            return list;
+        }
     }
 }

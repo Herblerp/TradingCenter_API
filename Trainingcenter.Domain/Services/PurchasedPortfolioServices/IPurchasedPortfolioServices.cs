@@ -13,5 +13,6 @@ namespace Trainingcenter.Domain.Services.PurchasedPortfolioServices
         Task<PurchasedPortfolioDTO> RemovePurchasedPortfolio(PurchasedPortfolioDTO pp);
         Task<bool> Exists(int userId, int portfolioId);
         Task<List<PurchasedPortfolioDTO>> GetPurchasedPortfoliosById(int userId);
+        Task<List<SoldPerMonthDTO>> GetSoldPerMonth(int portfolioId);
     }
 }

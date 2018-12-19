@@ -11,6 +11,8 @@ namespace Trainingcenter.Domain.DomainModels
         public int PortfolioId { get; set; }
         public int UserId { get; set; }
 
+        public DateTime PurchasedOn { get; set; }
+
         public Portfolio Portfolio {get; set;}
         public User User { get; set; }
     }

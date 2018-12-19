@@ -13,6 +13,7 @@ namespace Trainingcenter.Domain.DomainModels
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Phone { get; set; }
+        public string Description { get; set; }
         [Required]
         public string Email { get; set; }
 
@@ -25,6 +26,8 @@ namespace Trainingcenter.Domain.DomainModels
         public DateTime LastActive { get; set; }
 
         public string PictureURL { get; set; }
+        public string VerificationKey { get; set; }
+        public bool IsVerified { get; set; }
         public ICollection<Order> Orders { get; set; }
         public ICollection<Portfolio> Portfolios { get; set; }
         public ICollection<ExchangeKey> ExchangeKeys { get; set; }
