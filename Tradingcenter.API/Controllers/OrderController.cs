@@ -117,13 +117,20 @@ namespace Tradingcenter.API.Controllers
         [HttpGet("refresh")]
         public async Task<IActionResult> RefreshOrders()
         {
-            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var orderlist = await _orderServices.RefreshAllOrders(userId);
-            if(orderlist.Count == 0)
+            try
             {
-                return StatusCode(200, "No new orders were found. Make sure your keys are valid.");
+                int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var orderlist = await _orderServices.RefreshAllOrders(userId);
+                if (orderlist.Count == 0)
+                {
+                    return StatusCode(200, "No new orders were found. Make sure your keys are valid.");
+                }
+                return StatusCode(200);
             }
-            return StatusCode(200);
+            catch
+            {
+                return StatusCode(500, "Something went wrong while fetching orders. Make sure your API key and secret are valid.");
+            }
         }
 
         [HttpPost]
