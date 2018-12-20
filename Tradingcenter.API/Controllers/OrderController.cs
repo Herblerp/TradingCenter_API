@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Encodings.Web;
 using Trainingcenter.Domain.DomainModels;
 using Trainingcenter.Domain.DTOs.OrderDTO_s;
 using Trainingcenter.Domain.Services.OrderServices;
 using Trainingcenter.Domain.Services.PortfolioServices;
+using Trainingcenter.Domain.Services.CommentServices;
+using Trainingcenter.Domain.Services.PurchasedPortfolioServices;
 
 namespace Tradingcenter.API.Controllers
 {
@@ -22,11 +25,27 @@ namespace Tradingcenter.API.Controllers
     {
         private readonly IOrderServices _orderServices;
         private readonly IPortfolioServices _portfolioServices;
+        private readonly IPurchasedPortfolioServices _ppServices;
+        private readonly ICommentServices _commentServices;
+        private HtmlEncoder _htmlEncoder;
+        private JavaScriptEncoder _javaScriptEncoder;
+        private UrlEncoder _urlEncoder;
 
-        public OrderController(IOrderServices orderService, IPortfolioServices portfolioServices)
+        public OrderController( IOrderServices orderService, 
+                                IPortfolioServices portfolioServices,
+                                ICommentServices commentServices,
+                                IPurchasedPortfolioServices ppservices,
+                                HtmlEncoder htmlEncoder,
+                                JavaScriptEncoder javascriptEncoder,
+                                UrlEncoder urlEncoder)
         {
             _orderServices = orderService;
             _portfolioServices = portfolioServices;
+            _commentServices = commentServices;
+            _ppServices = ppservices;
+            _htmlEncoder = htmlEncoder;
+            _javaScriptEncoder = javascriptEncoder;
+            _urlEncoder = urlEncoder;
         }
 
         [HttpGet("get")]
@@ -47,6 +66,54 @@ namespace Tradingcenter.API.Controllers
                 return StatusCode(500, "Something went wrong while attempting to get orders");
             }
         }
+        [HttpGet("getFromSold")]
+        public async Task<IActionResult> GetFromSold(int portfolioId)
+        {
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
+
+            if(await _ppServices.Exists(userId, portfolioId))
+            {
+                var orders = await _orderServices.GetOrders(portfolio.UserId, portfolioId, 0, null, null);
+                return StatusCode(200, orders);
+            }
+            return StatusCode(400, "Computer sais no");
+        }
+
+        [HttpGet("Comment")]
+        public async Task<IActionResult> GetComments(int orderId)
+        {
+            if (await _orderServices.GetOrderById(orderId) == null)
+            {
+                return StatusCode(400, "Portfolio with id " + orderId + " was not found.");
+            }
+            var comments = await _commentServices.GetAllOrderCommentByOrderId(orderId);
+            return StatusCode(200, comments);
+        }
+
+        [HttpGet("getNotInPortfolio")]
+        public async Task<IActionResult> GetOrdertsNotInPortfolio(int portfolioId)
+        {
+            int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var orderList = await _orderServices.GetOrders(userId, 0, 50, null, null);
+            var portfolioOrderList = await _orderServices.GetOrders(userId, portfolioId, 199, null, null);
+
+            for (int i = 0; i<orderList.Count(); i++)
+            {
+                var order = orderList[i];
+                foreach(OrderDTO pOrderd in portfolioOrderList)
+                {
+                    if(order.OrderId == pOrderd.OrderId)
+                    {
+                        orderList.Remove(order);
+                    }
+                }
+            }
+
+            return StatusCode(200, orderList);
+        }
+
         [HttpGet("refresh")]
         public async Task<IActionResult> RefreshOrders()
         {
@@ -57,6 +124,22 @@ namespace Tradingcenter.API.Controllers
                 return StatusCode(200, "No new orders were found. Make sure your keys are valid.");
             }
             return StatusCode(200);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrder(OrderDTO orderToUpdate)
+        {
+            if(orderToUpdate.Description != null)
+                orderToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(orderToUpdate.Description));
+
+            if(orderToUpdate.ImgURL != null)
+            {
+                orderToUpdate.ImgURL = _urlEncoder.Encode(orderToUpdate.ImgURL);
+            }
+
+            var order = await _orderServices.UpdateOrder(orderToUpdate);
+
+            return StatusCode(200, order);
         }
     }
 }

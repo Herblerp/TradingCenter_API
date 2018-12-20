@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
@@ -21,7 +22,10 @@ namespace Trainingcenter.Domain.Services.PurchasedPortfolioServices
 
         public async Task<PurchasedPortfolioDTO> AddPurchasedPortfolio(PurchasedPortfolioDTO pp)
         {
-            var ppCreated = ConvertPurchase(await _genericRepo.AddAsync(ConvertPurchaseDTO(pp)));
+            var x = ConvertPurchaseDTO(pp);
+            x.PurchasedOn = DateTime.Now;
+            var ppCreated = ConvertPurchase(await _genericRepo.AddAsync(x));
+
             return ppCreated;
         }
 
@@ -81,6 +85,53 @@ namespace Trainingcenter.Domain.Services.PurchasedPortfolioServices
                 PortfolioId = ppDTO.PortfolioId
             };
             return pp;
+        }
+
+        public async Task<List<SoldPerMonthDTO>> GetSoldPerMonth(int portfolioId)
+        {
+            var purchases = await _ppRepo.GetPortfolioPurchases(portfolioId);
+            purchases = purchases.OrderBy(x => x.PurchasedOn).ToList();
+
+            if(purchases == null)
+            {
+                return null;
+            }
+
+            var currentMonth = purchases[0].PurchasedOn.ToString("MM/yyyy");
+            var count = 0;
+
+            var soldPerMonthList = new List<SoldPerMonthDTO>();
+
+            foreach (var spm in purchases)
+            {
+                var tempDate = spm.PurchasedOn.ToString("MM/yyyy");
+                if (tempDate == currentMonth)
+                {
+                    count++;
+                }
+                else
+                {
+                    var SoldPerMonth = new SoldPerMonthDTO
+                    {
+                        Amount = count,
+                        Month = currentMonth
+                    };
+
+                    soldPerMonthList.Add(SoldPerMonth);
+
+                    currentMonth = spm.PurchasedOn.ToString("MM/yyyy");
+                    count = 1;
+                }
+            }
+            var SoldPerMonthFinal = new SoldPerMonthDTO
+            {
+                Amount = count,
+                Month = currentMonth
+            };
+
+            soldPerMonthList.Add(SoldPerMonthFinal);
+
+            return soldPerMonthList;
         }
     }
 }

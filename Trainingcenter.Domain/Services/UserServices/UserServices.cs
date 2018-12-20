@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Trainingcenter.Domain.DomainModels;
@@ -44,13 +45,14 @@ namespace Trainingcenter.Domain.Services.UserServices
                 {
                     return null;
                 }
+                
 
                 userFromDB.LastActive = DateTime.Now;
                 await _genericRepo.UpdateAsync(userFromDB);
 
                 return ConvertUser(userFromDB);
             }
-            catch (Exception ex)
+            catch
             {
                 throw new Exception("UserService failed to login server");
             }
@@ -60,7 +62,6 @@ namespace Trainingcenter.Domain.Services.UserServices
         {
             try
             {
-
                 //Set username to lowercase
                 userToRegister.Username = userToRegister.Username.ToLower();
 
@@ -77,6 +78,9 @@ namespace Trainingcenter.Domain.Services.UserServices
                 userToCreate.PasswordHash = passwordHash;
                 userToCreate.PasswordSalt = passwordSalt;
                 userToCreate.CreatedOn = DateTime.Now;
+                userToCreate.VerificationKey = GetUniqueKey(128);
+                userToCreate.IsVerified = false;
+
 
                 //Create the user
                 await _genericRepo.AddAsync(userToCreate);
@@ -94,7 +98,9 @@ namespace Trainingcenter.Domain.Services.UserServices
                 var userToReturn = new UserDTO
                 {
                     UserId = createdUser.UserId,
-                    Username = createdUser.Username
+                    Username = createdUser.Username,
+                    VerificationKey = createdUser.VerificationKey,
+                    Email = createdUser.Email
                     //More fields here
                 };
 
@@ -116,6 +122,16 @@ namespace Trainingcenter.Domain.Services.UserServices
             }
 
             //Add check for empty strings
+            if (userToUpdate.Password != null)
+            {
+                byte[] passwordHash, passwordSalt;
+                CreatePasswordHash(userToUpdate.Password, out passwordHash, out passwordSalt);
+
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+            }
+                
+
             if(userToUpdate.FirstName != null)
                 user.FirstName = userToUpdate.FirstName;
 
@@ -130,6 +146,9 @@ namespace Trainingcenter.Domain.Services.UserServices
 
             if (userToUpdate.PictureURL != null)
                 user.PictureURL = userToUpdate.PictureURL;
+
+            if (userToUpdate.Description != null)
+                user.Description = userToUpdate.Description;
 
             return ConvertUser(await _genericRepo.UpdateAsync(user));
         }
@@ -154,6 +173,54 @@ namespace Trainingcenter.Domain.Services.UserServices
             {
                 return false;
             }
+        }
+
+        public async Task<UserDTO> ValidateUser(string key)
+        {
+            User user = await _userRepo.ValidateUser(key);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            user.VerificationKey = null;
+            user.IsVerified = true;
+
+            return ConvertUser(await _genericRepo.UpdateAsync(user));
+        }
+
+        public async Task<UserDTO> GetUserById(int userId)
+        {
+            var user = ConvertUser(await _userRepo.GetFromIdAsync(userId));
+            return user;
+        }
+
+        public async Task<UserDTO> GetPublicUserById(int userId)
+        {
+            var user = ConvertPublicUser(await _userRepo.GetFromIdAsync(userId));
+            return user;
+        }
+
+        public async Task<List<UserDTO>> SearchUser(string username)
+        {
+            var allUsers = await _userRepo.GetAll();
+            var foundUsers = new List<UserDTO>();
+
+            foreach (User user in allUsers)
+            {
+                if (user.Username.Contains(username))
+                {
+                    foundUsers.Add(ConvertPublicUser(user));
+                }
+            }
+            return foundUsers;
+        }
+
+        public async Task<UserDTO> DeleteUser(int userId)
+        {
+            var user = await _userRepo.GetFromIdAsync(userId);
+            return ConvertUser(await _genericRepo.DeleteAsync(user));
         }
 
         #endregion
@@ -194,12 +261,49 @@ namespace Trainingcenter.Domain.Services.UserServices
             var userDTO = new UserDTO
             {
                 UserId = user.UserId,
-                Username = user.Username
-                //More fields here
+                Username = user.Username,
+                Phone = user.Phone,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                VerificationKey = user.VerificationKey,
+                IsVerified = user.IsVerified,
+                PictureURL = user.PictureURL,
+                Description = user.Description
             };
             return userDTO;
         }
 
+        private UserDTO ConvertPublicUser(User user)
+        {
+            var publicUserDTO = new UserDTO
+            {
+                UserId = user.UserId,
+                Username = user.Username,
+                PictureURL = user.PictureURL,
+                Description = user.Description
+            };
+
+            return publicUserDTO;
+
+        }
+
         #endregion
+        private static string GetUniqueKey(int size)
+        {
+            char[] chars =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
+            byte[] data = new byte[size];
+            using (RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider())
+            {
+                crypto.GetBytes(data);
+            }
+            StringBuilder result = new StringBuilder(size);
+            foreach (byte b in data)
+            {
+                result.Append(chars[b % (chars.Length)]);
+            }
+            return result.ToString();
+        }
     }
 }

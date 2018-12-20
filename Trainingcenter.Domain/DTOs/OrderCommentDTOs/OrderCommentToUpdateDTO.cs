@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Trainingcenter.Domain.DTOs.CommentDTOs
+namespace Trainingcenter.Domain.DTOs.OrderCommentDTOs
 {
-    public class CommentToUpdateDTO
+    public class OrderCommentToUpdateDTO
     {
         [Required]
         public int CommentId { get; set; }

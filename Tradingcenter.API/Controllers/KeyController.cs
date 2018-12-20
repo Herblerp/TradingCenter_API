@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,10 +18,19 @@ namespace Tradingcenter.API.Controllers
     public class KeyController : ControllerBase
     {
         private readonly IExchangeKeyServices _keyService;
+        private HtmlEncoder _htmlEncoder;
+        private JavaScriptEncoder _javaScriptEncoder;
+        private UrlEncoder _urlEncoder;
 
-        public KeyController(IExchangeKeyServices keyService)
+        public KeyController(       IExchangeKeyServices keyService,
+                                    HtmlEncoder htmlEncoder,
+                                    JavaScriptEncoder javascriptEncoder,
+                                    UrlEncoder urlEncoder)
         {
             _keyService = keyService;
+            _htmlEncoder = htmlEncoder;
+            _javaScriptEncoder = javascriptEncoder;
+            _urlEncoder = urlEncoder;
         }
 
         // GET: api/Key
@@ -45,6 +55,9 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
+                key.Key = _javaScriptEncoder.Encode(key.Key);
+                key.Secret = _javaScriptEncoder.Encode(key.Secret);
+
                 if (key.Name != "BitMEX" && key.Name != "Binance")
                 {
                     return StatusCode(400, "Name must have one of the following values: BitMEX, Binance");

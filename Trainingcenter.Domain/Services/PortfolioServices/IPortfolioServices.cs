@@ -18,5 +18,6 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
         Task<PortfolioOrder> AddOrderById(PortfolioOrderDTO po);
         Task<PortfolioOrder> RemoveOrderById(int orderId, int portfolioId);
         Task<bool> PortfolioOrderExists(int orderId, int portfolioId);
+        Task<List<PortfolioDTO>> GetAllForSalePortfolios(int userId);
     }
 }

@@ -41,5 +41,11 @@ namespace Tradingcenter.Data.Repositories
             var purchase = await _context.PurchasedPortfolios.FirstOrDefaultAsync(x => x.UserId == userId && x.PortfolioId == portfolioId);
             return purchase;
         }
+
+        public async Task<List<PurchasedPortfolio>> GetPortfolioPurchases(int portfolioId)
+        {
+            var purchases = await _context.PurchasedPortfolios.Where(x => x.PortfolioId == portfolioId).ToListAsync();
+            return purchases;
+        }
     }
 }

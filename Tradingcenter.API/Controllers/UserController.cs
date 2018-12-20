@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Trainingcenter.Domain.DTOs.UserDTOs;
 using Trainingcenter.Domain.Services;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authorization;
 
 //DONE
 namespace Tradingcenter.API.Controllers
@@ -19,11 +21,21 @@ namespace Tradingcenter.API.Controllers
 
         private readonly IUserServices _userService;
         public IConfiguration _config;
+        private HtmlEncoder _htmlEncoder;
+        private JavaScriptEncoder _javaScriptEncoder;
+        private UrlEncoder _urlEncoder;
 
-       public UserController(IUserServices userService, IConfiguration config)
+        public UserController(  IUserServices userService, 
+                                IConfiguration config, 
+                                HtmlEncoder htmlEncoder,
+                                JavaScriptEncoder javascriptEncoder,
+                                UrlEncoder urlEncoder)
         {
             _userService = userService;
             _config = config;
+            _htmlEncoder = htmlEncoder;
+            _javaScriptEncoder = javascriptEncoder;
+            _urlEncoder = urlEncoder;
         }
 
         #endregion
@@ -76,6 +88,9 @@ namespace Tradingcenter.API.Controllers
         {
             try
             {
+                userToRegister.Email = _htmlEncoder.Encode(_javaScriptEncoder.Encode(userToRegister.Email));
+                userToRegister.Username = _htmlEncoder.Encode(_javaScriptEncoder.Encode(userToRegister.Username));
+
                 if (await _userService.UserExists(userToRegister.Username))
                 {
                     return StatusCode(400, "Username already taken");
@@ -85,17 +100,39 @@ namespace Tradingcenter.API.Controllers
                     return StatusCode(400, "Invalid email");
                 }
                 var user = await _userService.Register(userToRegister);
-                return StatusCode(200);
+                return StatusCode(200, user);
             }
             catch
             {
                 return StatusCode(500, "Something went wrong while attempting to register, please try again in a few moments.");
             }
         }
+
+        [HttpPost("validate/{key}")]
+        public async Task<IActionResult> Validate(string key)
+        {
+
+            var user = await _userService.ValidateUser(key);
+
+            if(user == null)
+               return StatusCode(400, "Failed to verify email");
+
+            return StatusCode(200);
+
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post(UserToUpdateDTO userToUpdate)
         {
-            if (userToUpdate.Email != null && !_userService.IsValidEmail(userToUpdate.Email))
+            userToUpdate.FirstName = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.FirstName));
+            userToUpdate.LastName = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.LastName));
+            userToUpdate.Phone = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.Phone));
+            userToUpdate.Email = _javaScriptEncoder.Encode(_htmlEncoder.Encode(userToUpdate.Email));
+            userToUpdate.Username = _htmlEncoder.Encode(_javaScriptEncoder.Encode(userToUpdate.Username));
+            userToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(userToUpdate.Description));
+
+           if (userToUpdate.Email != null && !_userService.IsValidEmail(userToUpdate.Email))
             {
                 return StatusCode(400, "Thats not an email address...");
             }
@@ -105,6 +142,51 @@ namespace Tradingcenter.API.Controllers
             {
                 return StatusCode(500, "kaka");
             }
+            return StatusCode(200);
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Get(int userId)
+        {
+            if (userId != 0)
+            {
+                var user = await _userService.GetPublicUserById(userId);
+                if (user == null)
+                {
+                    return StatusCode(400, "User with id " + userId + " was not found.");
+                }
+                return StatusCode(200, user);
+            }
+            else
+            {
+                userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await _userService.GetUserById(userId);
+                if (user == null)
+                {
+                    return StatusCode(400, "User with id " + userId + " was not found.");
+                }
+                return StatusCode(200, user);
+            }
+        }
+
+        [Authorize]
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchUser(string username)
+        {
+            if(username == null)
+            {
+                return StatusCode(400, "Please specify a username");
+            }
+            return StatusCode(200, await _userService.SearchUser(username));
+        }
+
+        [Authorize]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser()
+        {
+            var userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            await _userService.DeleteUser(userId);
             return StatusCode(200);
         }
     }

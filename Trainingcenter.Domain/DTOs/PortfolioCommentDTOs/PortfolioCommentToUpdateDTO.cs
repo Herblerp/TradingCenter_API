@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Trainingcenter.Domain.DTOs.CommentDTOs
+namespace Trainingcenter.Domain.DTOs.PortfolioCommentDTOs
 {
-    public class CommentDTO
+    public class PortfolioCommentToUpdateDTO
     {
+        [Required]
         public int CommentId { get; set; }
-        public int PortfolioId { get; set; }
-        public int UserId { get; set; }
-
+        [Required]
         public string Message { get; set; }
-        public string PostedOn { get; set; }
     }
 }
