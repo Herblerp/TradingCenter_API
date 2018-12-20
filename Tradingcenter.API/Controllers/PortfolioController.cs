@@ -174,7 +174,6 @@ namespace Tradingcenter.API.Controllers
             {
                 portfolio.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolio.Description));
                 portfolio.Goal = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolio.Goal));
-                portfolio.ImgURL = _javaScriptEncoder.Encode(portfolio.ImgURL);
                 portfolio.Name = _htmlEncoder.Encode(_javaScriptEncoder.Encode(portfolio.Name));
 
                 int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));

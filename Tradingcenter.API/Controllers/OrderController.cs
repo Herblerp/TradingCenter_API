@@ -139,11 +139,6 @@ namespace Tradingcenter.API.Controllers
             if(orderToUpdate.Description != null)
                 orderToUpdate.Description = _htmlEncoder.Encode(_javaScriptEncoder.Encode(orderToUpdate.Description));
 
-            if(orderToUpdate.ImgURL != null)
-            {
-                orderToUpdate.ImgURL = _urlEncoder.Encode(orderToUpdate.ImgURL);
-            }
-
             var order = await _orderServices.UpdateOrder(orderToUpdate);
 
             return StatusCode(200, order);
