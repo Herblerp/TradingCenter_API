@@ -74,7 +74,7 @@ namespace Tradingcenter.API.Controllers
             var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
             var orders = await _orderServices.GetOrders(portfolio.UserId, portfolioId, 0, null, null);
 
-            if (await _ppServices.Exists(userId, portfolioId))
+            if (await _ppServices.Exists(userId, portfolioId) || portfolio.UserId == userId)
             {
                 return StatusCode(200, orders);
             }
