@@ -116,7 +116,8 @@ namespace Trainingcenter.Domain.Services.OrderServices
                     PortfolioId = portfolioId,
                     OrderId = order.OrderId
                 };
-                await _genericRepo.AddAsync(orderPortfolio);
+                if(order.OrderId != 0)
+                    await _genericRepo.AddAsync(orderPortfolio);
             }
             return savedOrders;
         }
