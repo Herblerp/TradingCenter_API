@@ -72,13 +72,18 @@ namespace Tradingcenter.API.Controllers
             int userId = Int32.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var portfolio = await _portfolioServices.GetPortfolioByIdAsync(portfolioId);
+            var orders = await _orderServices.GetOrders(portfolio.UserId, portfolioId, 0, null, null);
 
-            if(await _ppServices.Exists(userId, portfolioId))
+            if (await _ppServices.Exists(userId, portfolioId))
             {
-                var orders = await _orderServices.GetOrders(portfolio.UserId, portfolioId, 0, null, null);
                 return StatusCode(200, orders);
             }
-            return StatusCode(400, "Computer sais no");
+            else
+            {
+                orders = orders.OrderBy(x => x.Timestamp).ToList();
+                orders = orders.Take(3).ToList();
+                return StatusCode(200,orders);
+            }
         }
 
         [HttpGet("Comment")]
