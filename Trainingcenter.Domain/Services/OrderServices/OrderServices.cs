@@ -224,7 +224,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
             var orderList = new List<Order>();
             if (dateFrom == null)
             {
-                if (portfolioId == 0)
+                if(portfolioId == 0)
                 {
                     orderList = await _orderRepo.GetOrdersFromUserIdAsync(userId);
                 }
@@ -273,7 +273,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
             orderList = orderList.Take(amount).ToList();
 
             var orderDTOList = new List<OrderDTO>();
-            foreach (Order order in orderList)
+            foreach(Order order in orderList)
             {
                 orderDTOList.Add(ConvertOrder(order));
             }
@@ -304,73 +304,36 @@ namespace Trainingcenter.Domain.Services.OrderServices
             orderList = orderList.OrderByDescending(x => x.Timestamp).ToList();
 
             var ProfitPerDayDTOList = new List<ProfitPerDayDTO>();
-
-            List<int> idList = new List<int>();
-
-
+            
             foreach (Order order in orderList)
             {
-
-                bool idAlreadyInList = false;
-                foreach (int id in idList)
+                double profit = 0;
+                if (order.Side.Equals("Sell"))
                 {
-                    if (id == order.ExchangeKeyId)
+                    profit = order.Price;
+                }
+                else
+                {
+                    profit = order.Price * -1;
+                }
+
+                bool dayAlreadyInList = false;
+
+                foreach (ProfitPerDayDTO profitPerDay in ProfitPerDayDTOList)
+                {
+                    if (order.Timestamp.ToString("dd/MM/yyyy") == profitPerDay.Day)
                     {
-                        idAlreadyInList = true;
+                        profitPerDay.Profit = profitPerDay.Profit + profit;
+                        dayAlreadyInList = true;
                     }
                 }
-                if (!idAlreadyInList)
-                {
-                    idList.add(order.Exchangekey);
-                    
-                    ProfitPerDayDTOList.add(new ProfitPerDayDTO { Name = order.Exchange, ExchangeKeyId = order.ExchangeKeyId, ProfitPerDayList = new ICollection<ProfitPerDay>() });
-                }
-                
 
-            }
-
-            foreach(ProfitPerDayDTO profitPerDay in ProfitPerDayDTOList)
-            {
-                foreach (Order order in orderList)
+                if (!dayAlreadyInList)
                 {
 
-                    if (order.Exchangekey == profitPerDay.ExchangeKeyId)
-                    {
-
-
-                        double profit = 0;
-
-                        if (order.Side.Equals("Sell"))
-                        {
-                            profit = order.OrderQty / order.Price;
-                        }
-                        else
-                        {
-                            profit = (order.OrderQty / order.Price) * -1;
-                        }
-
-                        bool dayAlreadyInList = false;
-
-
-                        foreach (ProfitPerDay profitPerDayElement in profitPerDay.ProfitPerDayList)
-                        {
-                            if (order.Timestamp.ToString("dd/MM/yyyy") == profitPerDayElement.Day)
-                            {
-                                profitPerDayElement.Profit = profitPerDayElement.Profit + profit;
-                                dayAlreadyInList = true;
-                            }
-                        }
-
-                        if (!dayAlreadyInList)
-                        {
-                            profitPerDayElement.add(new ProfitPerDay { Profit = profit, Day = order.Timestamp.ToString("dd/MM/yyyy") });
-
-                        }
-                    }
-
+                    ProfitPerDayDTOList.Add(new ProfitPerDayDTO { Profit = profit, Day = order.Timestamp.ToString("dd/MM/yyyy") });
                 }
             }
-
 
 
             return ProfitPerDayDTOList;
@@ -404,11 +367,11 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
                     if (order.Side.Equals("Sell"))
                     {
-                        profit = order.OrderQty / order.Price;
+                        profit = order.Price;
                     }
                     else
                     {
-                        profit = (order.OrderQty / order.Price) * -1;
+                        profit = order.Price * -1;
                     }
 
                     bool dayAlreadyInList = false;
@@ -432,6 +395,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             return ProfitPerDayDTOList;
         }
+        
         #endregion
 
         #region Converters
