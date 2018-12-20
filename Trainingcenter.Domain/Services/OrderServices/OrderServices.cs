@@ -91,6 +91,7 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
             foreach (ExchangeKey key in BitMEXKey)
             {
+
                 orderList.AddRange(await GetBitMEXOrdersFromUserId(userId, portfolioId, key.LastRefresh.Date));
                 key.LastRefresh = time;
 
@@ -173,18 +174,22 @@ namespace Trainingcenter.Domain.Services.OrderServices
 
                 string temp = bitmex.GetOrders(date);
 
-                try
+                if (!temp.Contains("error"))
                 {
-                    var BitMEXOrderList = JsonConvert.DeserializeObject<List<BitMEXOrder>>(temp, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
-                    foreach (var BitMEXOrder in BitMEXOrderList)
+
+                    try
                     {
-                        Order order = ConvertBitMEXOrder(BitMEXOrder, userId);
-                        orderList.Add(order);
+                        var BitMEXOrderList = JsonConvert.DeserializeObject<List<BitMEXOrder>>(temp, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                        foreach (var BitMEXOrder in BitMEXOrderList)
+                        {
+                            Order order = ConvertBitMEXOrder(BitMEXOrder, userId);
+                            orderList.Add(order);
+                        }
                     }
-                }
-                catch
-                {
-                    return null;
+                    catch
+                    {
+                        return null;
+                    }
                 }
             }
             return orderList;

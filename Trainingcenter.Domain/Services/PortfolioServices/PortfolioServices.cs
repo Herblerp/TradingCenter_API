@@ -133,6 +133,7 @@ namespace Trainingcenter.Domain.Services.PortfolioServices
             var portfolioDTO = new PortfolioDTO
             {
                 PortfolioId = portfolio.PortfolioId,
+                UserId = portfolio.UserId,
                 Name = portfolio.Name,
                 Description = portfolio.Description,
                 Goal = portfolio.Goal,
